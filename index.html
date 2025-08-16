@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حسابداری شخصی</title>
+<style>
+    body {
+        font-family: "Vazir", Tahoma, sans-serif;
+        background: linear-gradient(to bottom, #f9f9f9, #eaeaea);
+        margin: 0;
+        padding: 15px;
+    }
+    h1 {
+        text-align: center;
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    th {
+        background: #4CAF50;
+        color: white;
+        padding: 10px;
+        font-weight: normal;
+        font-size: 0.9rem;
+    }
+    td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    input {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    button {
+        padding: 6px 10px;
+        cursor: pointer;
+        border: none;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+    .btn-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+    .add-btn { background: #4CAF50; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+    .add-btn:hover { background: #43a047; }
+    .clear-btn { background: #f44336; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+    .clear-btn:hover { background: #d32f2f; }
+    .del-btn { background: #f44336; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+    .del-btn:hover { background: #d32f2f; }
+    .plus-btn { background: #2196F3; color: white; margin-left: 5px; }
+    .plus-btn:hover { background: #1976d2; }
+    .tooltip { position: relative; display: inline-block; cursor: pointer; }
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #555;
+        color: #fff;
+        text-align: right;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        right: 50%;
+        margin-right: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        white-space: pre-line;
+    }
+    .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+    .totals {
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-around;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+    @media (max-width: 800px) {
+        table, thead, tbody, th, td, tr { display: block; }
+        thead { display: none; }
+        tr { background: #fff; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.05); padding: 10px; }
+        td { display: flex; justify-content: flex-start; padding: 6px 0; border: none; border-bottom: 1px solid #eee; }
+        td:last-child { border-bottom: none; }
+        td::before { content: attr(data-label); font-weight: bold; color: #555; text-align: right; width: 35%; display: inline-block; }
+        input { 
+            width: 60%;
+            font-size: 0.8rem;
+            text-align: right;
+        }
+        .plus-btn, .del-btn { margin: 0; margin-right: auto; }
+        .totals { flex-direction: column; gap: 5px; align-items: center; }
+    }
+</style>
+</head>
+<body>
+
+<h1>برنامه حسابداری شخصی</h1>
+
+<table id="accountTable">
+    <thead>
+        <tr>
+            <th>تاریخ</th>
+            <th>شرح</th>
+            <th>تعداد</th>
+            <th>قیمت واحد</th>
+            <th>جمع کل</th>
+            <th>دریافتی</th>
+            <th>مانده قابل دریافت</th>
+            <th>حذف</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div class="btn-container">
+    <button class="add-btn" onclick="addRow()">➕ افزودن ردیف</button>
+    <button class="clear-btn" onclick="clearAll()">🗑 حذف همه</button>
+</div>
+
+<div class="totals">
+    <div>جمع کل هزینه‌ها: <span id="totalSum">0</span></div>
+    <div>جمع کل دریافتی‌ها: <span id="totalReceived">0</span></div>
+    <div>جمع کل مانده‌ها: <span id="totalRemaining">0</span></div>
+</div>
+
+<script>
+function addRow(title = "", count = "", price = "") {
+    let table = document.querySelector("#accountTable tbody");
+    let row = document.createElement("tr");
+    row.dataset.payments = JSON.stringify([]);
+    let today = new Date();
+    let dateStr = today.toLocaleDateString("fa-IR");
+    row.innerHTML = `
+        <td data-label="تاریخ">${dateStr}</td>
+        <td data-label="شرح"><input value="${title}" oninput="saveData()"></td>
+        <td data-label="تعداد"><input type="number" value="${count}" oninput="updateTotals(); saveData()"></td>
+        <td data-label="قیمت واحد"><input type="number" value="${price}" oninput="updateTotals(); saveData()"></td>
+        <td data-label="جمع کل">0</td>
+        <td data-label="دریافتی">
+            <div class="tooltip"><span class="received-amount">0</span>
+            <span class="tooltiptext">هیچ پرداختی ثبت نشده</span></div>
+            <button class="plus-btn" onclick="addPayment(this)">+</button>
+        </td>
+        <td data-label="مانده قابل دریافت">0</td>
+        <td data-label="حذف"><button class="del-btn" onclick="this.closest('tr').remove(); updateTotals(); saveData();">❌</button></td>
+    `;
+    table.appendChild(row);
+    updateTotals();
+    saveData();
+}
+
+function addPayment(btn) {
+    let amount = prompt("مبلغ دریافتی جدید را وارد کنید:");
+    if (amount === null || amount.trim() === "" || isNaN(amount)) return;
+    let payment = parseFloat(amount);
+    let row = btn.closest("tr");
+    let payments = JSON.parse(row.dataset.payments);
+    let today = new Date();
+    let dateStr = today.toLocaleDateString("fa-IR");
+    payments.push({ amount: payment, date: dateStr });
+    row.dataset.payments = JSON.stringify(payments);
+    updateReceivedCell(row);
+    updateTotals();
+    saveData();
+}
+
+function updateReceivedCell(row) {
+    let payments = JSON.parse(row.dataset.payments);
+    let totalReceived = payments.reduce((sum, p) => sum + p.amount, 0);
+    row.querySelector(".received-amount").innerText = totalReceived.toLocaleString();
+    if (payments.length > 0) {
+        let tooltipText = payments.map(p => `${p.amount.toLocaleString()} تومان - ${p.date}`).join("\n");
+        row.querySelector(".tooltiptext").innerText = tooltipText;
+    } else {
+        row.querySelector(".tooltiptext").innerText = "هیچ پرداختی ثبت نشده";
+    }
+}
+
+function updateTotals() {
+    let rows = document.querySelectorAll("#accountTable tbody tr");
+    let totalSum = 0;
+    let totalReceived = 0;
+    let totalRemaining = 0;
+    rows.forEach(row => {
+        let count = parseFloat(row.cells[2].children[0].value) || 0;
+        let price = parseFloat(row.cells[3].children[0].value) || 0;
+        let total = count * price;
+        totalSum += total;
+
+        let payments = JSON.parse(row.dataset.payments);
+        let received = payments.reduce((sum, p) => sum + p.amount, 0);
+        totalReceived += received;
+
+        let remain = total - received;
+        totalRemaining += remain;
+
+        row.cells[4].innerText = total.toLocaleString();
+        row.cells[6].innerText = remain.toLocaleString();
+        updateReceivedCell(row);
+    });
+    document.getElementById("totalSum").innerText = totalSum.toLocaleString();
+    document.getElementById("totalReceived").innerText = totalReceived.toLocaleString();
+    document.getElementById("totalRemaining").innerText = totalRemaining.toLocaleString();
+}
+
+function clearAll() {
+    if (confirm("آیا مطمئن هستید که همه ردیف‌ها حذف شوند؟")) {
+        document.querySelector("#accountTable tbody").innerHTML = "";
+        updateTotals();
+        localStorage.removeItem("accountData");
+    }
+}
+
+// ذخیره اطلاعات جدول در LocalStorage
+function saveData() {
+    let rows = document.querySelectorAll("#accountTable tbody tr");
+    let data = [];
+    rows.forEach(row => {
+        let title = row.cells[1].children[0].value;
+        let count = row.cells[2].children[0].value;
+        let price = row.cells[3].children[0].value;
+        let payments = JSON.parse(row.dataset.payments);
+        let date = row.cells[0].innerText;
+        data.push({ date, title, count, price, payments });
+    });
+    localStorage.setItem("accountData", JSON.stringify(data));
+}
+
+// بارگذاری اطلاعات ذخیره شده
+function loadData() {
+    let data = JSON.parse(localStorage.getItem("accountData") || "[]");
+    data.forEach(item => {
+        addRow(item.title, item.count, item.price);
+        let lastRow = document.querySelector("#accountTable tbody tr:last-child");
+        lastRow.cells[0].innerText = item.date;
+        lastRow.dataset.payments = JSON.stringify(item.payments);
+        updateReceivedCell(lastRow);
+    });
+    updateTotals();
+}
+
+// بارگذاری داده‌ها هنگام شروع صفحه
+window.onload = loadData;
+</script>
+
+</body>
+</html>
