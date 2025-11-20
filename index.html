@@ -2,7 +2,10 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>داشبورد مدیریت مالی</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,24 +18,70 @@
     
     <style>
         :root {
+            color-scheme: light;
             --primary-color: #3B82F6; --primary-hover: #2563EB; --success-color: #10B981; --success-hover: #059669; --danger-color: #EF4444; --danger-hover: #DC2626; --warning-color: #F59E0B; --warning-hover: #D97706; --info-color: #8B5CF6; --info-hover: #7C3AED; --secondary-color: #6B7281; --secondary-hover: #4B5563; --bg-color: #F3F4F6; --card-bg-color: #FFFFFF; --text-primary: #1F2937; --text-secondary: #6B7281; --border-color: #E5E7EB; --font-family: 'Vazirmatn', sans-serif; --border-radius: 12px; --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
-        /* <<< جدید: تم تاریک */
+        
         body.theme-dark {
+            color-scheme: dark;
             --bg-color: #111827; --card-bg-color: #1F2937; --text-primary: #F9FAFB; --text-secondary: #9CA3AF; --border-color: #374151; --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2); --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
         }
-        /* <<< جدید: تم سبز */
-        body.theme-green {
-            --primary-color: #10B981; --primary-hover: #059669; --info-color: #3B82F6; --info-hover: #2563EB;
-        }
-        /* <<< جدید: تم نیمه‌شب */
+        
         body.theme-midnight {
+            color-scheme: dark;
             --primary-color: #8B5CF6; --primary-hover: #7C3AED; --bg-color: #1E293B; --card-bg-color: #334155; --text-primary: #F1F5F9; --text-secondary: #94A3B8; --border-color: #475569;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-primary); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transition: background-color 0.3s ease, color 0.3s ease; }
+        body.theme-green {
+            color-scheme: light;
+            --primary-color: #10B981; --primary-hover: #059669; --info-color: #3B82F6; --info-hover: #2563EB;
+            --bg-color: #F0FDF4; --card-bg-color: #FFFFFF; --border-color: #D1FAE5;
+        }
         
+        body.theme-ocean {
+            color-scheme: light;
+            --primary-color: #2563EB; --primary-hover: #1D4ED8; --bg-color: #EFF6FF; --card-bg-color: #FFFFFF; --text-primary: #1E3A8A; --text-secondary: #64748B; --border-color: #DBEAFE;
+            --success-color: #16A34A; --danger-color: #DC2626; --warning-color: #D97706;
+        }
+
+        body.theme-royal {
+            color-scheme: dark;
+            --bg-color: #5D1A23; --card-bg-color: #7B2E3A; --text-primary: #F5EBE0; --text-secondary: #D5BDAF; --border-color: #A4626D;
+            --primary-color: #D4AF37; --primary-hover: #B89B2E; --success-color: #57CC99; --danger-color: #FF6B6B; --info-color: #A9B4C2;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-primary); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transition: background-color 0.3s ease, color 0.3s ease; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* استایل‌های صفحه قفل (PIN Code) */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px;
+            transition: opacity 0.3s ease;
+        }
+        #lock-screen.hidden { opacity: 0; pointer-events: none; }
+        .pin-container { text-align: center; width: 100%; max-width: 320px; }
+        .pin-title { font-size: 20px; margin-bottom: 30px; color: var(--text-primary); }
+        .pin-dots { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+        .pin-dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--primary-color); transition: background-color 0.2s; }
+        .pin-dot.filled { background-color: var(--primary-color); }
+        .pin-dot.error { border-color: var(--danger-color); background-color: var(--danger-color); animation: shake 0.3s; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; direction: ltr; }
+        .num-btn { 
+            background: var(--card-bg-color); color: var(--text-primary); border: 1px solid var(--border-color); 
+            border-radius: 50%; width: 70px; height: 70px; font-size: 24px; font-weight: 600; 
+            cursor: pointer; display: flex; justify-content: center; align-items: center; 
+            box-shadow: var(--shadow); transition: transform 0.1s, background-color 0.2s; 
+            margin: 0 auto;
+        }
+        .num-btn:active { transform: scale(0.9); background-color: var(--border-color); }
+        .num-btn.delete { color: var(--danger-color); font-size: 20px; }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+
+        /* استایل‌های قبلی */
         .page-back-button-container { margin-bottom: 16px; }
         .page-back-button { background: none; border: none; color: var(--text-secondary); font-family: var(--font-family); font-size: 16px; font-weight: 500; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: background-color 0.2s; }
         .page-back-button:hover { background-color: var(--border-color); }
@@ -45,8 +94,8 @@
         #header-theme-toggle .theme-icon-wrapper i { position: absolute; transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
         #header-theme-toggle .fa-sun { opacity: 0; transform: translateY(10px); }
         #header-theme-toggle .fa-moon { opacity: 1; transform: translateY(0); }
-        body.theme-dark #header-theme-toggle .fa-sun, body.theme-midnight #header-theme-toggle .fa-sun { opacity: 1; transform: translateY(0); }
-        body.theme-dark #header-theme-toggle .fa-moon, body.theme-midnight #header-theme-toggle .fa-moon { opacity: 0; transform: translateY(-10px); }
+        body.theme-dark #header-theme-toggle .fa-sun, body.theme-midnight #header-theme-toggle .fa-sun, body.theme-royal #header-theme-toggle .fa-sun { opacity: 1; transform: translateY(0); }
+        body.theme-dark #header-theme-toggle .fa-moon, body.theme-midnight #header-theme-toggle .fa-moon, body.theme-royal #header-theme-toggle .fa-moon { opacity: 0; transform: translateY(-10px); }
         .app-layout { display: flex; min-height: 100vh; }
         .sidebar { width: 260px; background-color: var(--card-bg-color); padding: 24px; border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transition: width 0.3s ease, background-color 0.3s ease; }
         .sidebar-header { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
@@ -67,12 +116,13 @@
         .form-group { margin-bottom: 16px; }
         label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-secondary); font-size: 14px; }
         input, textarea, select { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; font-family: var(--font-family); transition: all 0.3s ease; background-color: var(--bg-color); color: var(--text-primary); }
-        input[type="search"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24' 24' fill='%239CA3AF'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 15px center; background-size: 20px; padding-right: 45px; }
-        body.theme-dark input[type="search"], body.theme-midnight input[type="search"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24' 24' fill='%23F9FAFB'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E"); }
+        input.has-error, textarea.has-error, select.has-error { border-color: var(--danger-color); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+        input[type="search"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24' 24' fill='%2399A3AF'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 15px center; background-size: 20px; padding-right: 45px; }
+        body.theme-dark input[type="search"], body.theme-midnight input[type="search"], body.theme-royal input[type="search"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24' 24' fill='%23F9FAFB'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E"); }
         input:focus, textarea:focus, select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         .btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: all 0.2s ease; font-family: var(--font-family); }
         .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); } .btn:active { transform: translateY(0); filter: brightness(0.95); } .btn-success { background-color: var(--success-color); } .btn-success:hover { background-color: var(--success-hover); } .btn-danger { background-color: var(--danger-color); } .btn-danger:hover { background-color: var(--danger-hover); } .btn-info { background-color: var(--info-color); } .btn-info:hover { background-color: var(--info-hover); } .btn-update { background-color: var(--warning-color); } .btn-update:hover { background-color: var(--warning-hover); } .btn-secondary { background-color: var(--secondary-color); } .btn-secondary:hover { background-color: var(--secondary-hover); } .btn-light { background-color: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); } .btn-light:hover { background-color: #E5E7EB; }
-        body.theme-dark .btn-light:hover, body.theme-midnight .btn-light:hover { background-color: #374151; }
+        body.theme-dark .btn-light:hover, body.theme-midnight .btn-light:hover, body.theme-royal .btn-light:hover { background-color: #374151; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 16px; }
         .section-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; }
         .section-count { background-color: var(--primary-color); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
@@ -150,8 +200,8 @@
         .status-badge { padding: 3px 10px; font-size: 12px; font-weight: 600; border-radius: 20px; line-height: 1.5; }
         .status-badge.unpaid { background-color: #FEF3C7; color: #92400E; }
         .status-badge.partial { background-color: #DBEAFE; color: #1E40AF; }
-        body.theme-dark .status-badge.unpaid, body.theme-midnight .status-badge.unpaid { background-color: #4B331A; color: #FBBF24; }
-        body.theme-dark .status-badge.partial, body.theme-midnight .status-badge.partial { background-color: #1E293B; color: #60A5FA; }
+        body.theme-dark .status-badge.unpaid, body.theme-midnight .status-badge.unpaid, body.theme-royal .status-badge.unpaid { background-color: #4B331A; color: #FBBF24; }
+        body.theme-dark .status-badge.partial, body.theme-midnight .status-badge.partial, body.theme-royal .status-badge.partial { background-color: #1E293B; color: #60A5FA; }
         .category-badge { display: inline-block; padding: 4px 12px; font-size: 12px; font-weight: 500; border-radius: 20px; background-color: var(--bg-color); color: var(--text-secondary); margin-left: 8px; }
         .pagination-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); }
         .page-btn { background-color: var(--card-bg-color); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: var(--font-family); font-size: 14px; transition: all 0.2s ease; }
@@ -233,7 +283,6 @@
             color: var(--text-secondary);
         }
 
-        /* <<< جدید: استایل‌های انتخاب‌گر تم */
         .theme-selector {
             display: flex;
             gap: 12px;
@@ -269,9 +318,10 @@
         }
         .preview-light { background-color: #F3F4F6; color: #1F2937; }
         .preview-dark { background-color: #111827; color: #F9FAFB; }
-        .preview-green { background-color: #DEF7EC; color: #064E3B; }
+        .preview-green { background-color: #F0FDF4; color: #059669; }
         .preview-midnight { background-color: #1E293B; color: #F1F5F9; }
-        /* پایان استایل‌های جدید */
+        .preview-ocean { background-color: #EFF6FF; color: #1E3A8A; }
+        .preview-royal { background-color: #5D1A23; color: #D4AF37; }
         
         #goals-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         #goals-card h2 { margin: 0; border: none; padding: 0; }
@@ -312,6 +362,22 @@
     </style>
 </head>
 <body>
+    <!-- Lock Screen -->
+    <div id="lock-screen" class="hidden">
+        <div class="pin-container">
+            <h2 class="pin-title" id="pin-title">لطفاً رمز عبور را وارد کنید</h2>
+            <div class="pin-dots" id="pin-dots">
+                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+            </div>
+            <div class="numpad" id="numpad">
+                <button class="num-btn" data-num="1">1</button><button class="num-btn" data-num="2">2</button><button class="num-btn" data-num="3">3</button>
+                <button class="num-btn" data-num="4">4</button><button class="num-btn" data-num="5">5</button><button class="num-btn" data-num="6">6</button>
+                <button class="num-btn" data-num="7">7</button><button class="num-btn" data-num="8">8</button><button class="num-btn" data-num="9">9</button>
+                <div></div><button class="num-btn" data-num="0">0</button><button class="num-btn delete" data-action="delete"><i class="fas fa-backspace"></i></button>
+            </div>
+        </div>
+    </div>
+
     <template id="add-item-menu-template">
         <div style="display: grid; gap: 12px; grid-template-columns: 1fr;">
             <button class="btn btn-light" id="add-work-menu-btn" style="padding: 20px; font-size: 18px; text-align: right;">
@@ -333,14 +399,14 @@
             <div class="form-group"><label for="workCount">تعداد</label><input type="number" id="workCount" placeholder="تعداد کار" min="1" value="1"></div>
             <div class="form-group"><label for="workPrice">قیمت (هر عدد)</label><input type="number" id="workPrice" placeholder="قیمت هر کار" min="0"></div>
         </div>
-        <div class="form-group"><label for="workDateStarted">تاریخ شروع (مثال: 1403/08/01)</label><div style="display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end;"><input type="text" id="workDateStarted" placeholder="اختیاری"><button class="btn btn-secondary" id="setStartDateBtn" type="button" style="width: auto;">ثبت امروز</button></div></div>
-        <div id="finishDateGroup" class="form-group" style="display: none;"><label for="workDateFinished">تاریخ پایان (مثال: 1403/08/02)</label><div style="display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end;"><input type="text" id="workDateFinished" placeholder="کار هنوز تمام نشده"><button class="btn btn-secondary" id="setFinishDateBtn" type="button" style="width: auto;">ثبت امروز</button></div></div>
+        <div class="form-group"><label for="workDateStarted">تاریخ شروع (مثال: 1403/08/01)</label><div style="display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end;"><input type="text" inputmode="numeric" id="workDateStarted" placeholder="اختیاری"><button class="btn btn-secondary" id="setStartDateBtn" type="button" style="width: auto;">ثبت امروز</button></div></div>
+        <div id="finishDateGroup" class="form-group" style="display: none;"><label for="workDateFinished">تاریخ پایان (مثال: 1403/08/02)</label><div style="display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end;"><input type="text" inputmode="numeric" id="workDateFinished" placeholder="کار هنوز تمام نشده"><button class="btn btn-secondary" id="setFinishDateBtn" type="button" style="width: auto;">ثبت امروز</button></div></div>
         <div class="form-actions" style="display: flex; gap: 10px; margin-top: 24px;"><button class="btn" id="workSubmitBtn">ذخیره کار</button></div>
     </template>
     <template id="payment-form-template">
         <div class="form-group"><label for="paymentEmployer">پرداخت از طرف کارفرما</label><select id="paymentEmployer"></select></div>
         <div class="form-group"><label for="paymentAmount">مبلغ دریافتی (تومان)</label><input type="number" id="paymentAmount" placeholder="مبلغ دریافتی را وارد کنید" min="1"></div>
-        <div class="form-group"><label for="paymentDate">تاریخ دریافت</label><input type="text" id="paymentDate" placeholder="مثال: 1403/08/01"></div>
+        <div class="form-group"><label for="paymentDate">تاریخ دریافت</label><input type="text" inputmode="numeric" id="paymentDate" placeholder="مثال: 1403/08/01"></div>
         <div class="form-group"><label for="paymentDescription">توضیحات (اختیاری)</label><textarea id="paymentDescription" placeholder="توضیحات دریافتی را وارد کنید"></textarea></div>
         <div class="form-actions" style="display: flex; gap: 10px;"><button class="btn btn-success" id="paymentSubmitBtn">ثبت دریافتی</button></div>
     </template>
@@ -348,7 +414,7 @@
         <div class="form-group"><label for="expenseTitle">عنوان هزینه</label><input type="text" id="expenseTitle" placeholder="مثلا: هزینه اینترنت"></div>
         <div class="form-group"><label for="expenseCategory">دسته‌بندی</label><select id="expenseCategory"></select></div>
         <div class="form-group"><label for="expenseAmount">مبلغ (تومان)</label><input type="number" id="expenseAmount" placeholder="مبلغ هزینه شده" min="1"></div>
-        <div class="form-group"><label for="expenseDate">تاریخ هزینه</label><input type="text" id="expenseDate" placeholder="مثال: 1403/08/01"></div>
+        <div class="form-group"><label for="expenseDate">تاریخ هزینه</label><input type="text" inputmode="numeric" id="expenseDate" placeholder="مثال: 1403/08/01"></div>
         <div class="form-group"><label for="expenseDescription">توضیحات (اختیاری)</label><textarea id="expenseDescription" placeholder="توضیحات بیشتر..."></textarea></div>
         <div class="form-actions" style="display: flex; gap: 10px;"><button class="btn btn-info" id="expenseSubmitBtn">ثبت هزینه</button></div>
     </template>
@@ -356,6 +422,10 @@
         <div class="form-group"><label for="incomeGoal">هدف درآمد این ماه (تومان)</label><input type="number" id="incomeGoal" placeholder="مثال: 5,000,000" min="0"></div>
         <div class="form-group"><label for="expenseGoal">سقف هزینه این ماه (تومان)</label><input type="number" id="expenseGoal" placeholder="مثال: 1,000,000" min="0"></div>
         <div class="form-actions" style="display: flex; gap: 10px;"><button class="btn btn-success" id="saveGoalsSubmitBtn">ذخیره اهداف</button></div>
+    </template>
+    <template id="rename-employer-template">
+        <div class="form-group"><label for="newEmployerName">نام جدید کارفرما</label><input type="text" id="newEmployerName" placeholder="نام جدید را وارد کنید"></div>
+        <div class="form-actions" style="display: flex; gap: 10px;"><button class="btn btn-primary" id="saveNewNameBtn">ذخیره تغییر نام</button></div>
     </template>
 
     <div class="notification" id="notification"></div>
@@ -368,56 +438,63 @@
         <main class="main-content">
             <section class="page-content active" id="dashboard-page"><div class="page-header"><h1>داشبورد</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div><div class="card dashboard-hero-card"><div class="hero-metric"><div class="label">درآمد این ماه</div><div class="value positive" id="dashboard-monthly-income">۰ تومان</div></div><div class="hero-metric-divider"></div><div class="hero-metric main-balance"><div class="label" id="dashboard-balance-label">مانده کل حساب</div><div class="value" id="dashboard-balance">۰ تومان</div></div><div class="hero-metric-divider"></div><div class="hero-metric"><div class="label">هزینه این ماه</div><div class="value negative" id="dashboard-monthly-expenses">۰ تومان</div></div></div><div class="dashboard-main-grid"><div class="card"><h2 style="margin-top:0;">روند درآمد و هزینه (۶ ماه اخیر)</h2><div style="height: 350px;"><canvas id="incomeExpenseChart"></canvas></div></div><div class="dashboard-lists-container"><div class="card" id="goals-card"><div class="card-header"><h2 style="margin-top:0;">اهداف مالی این ماه</h2><button class="action-btn" id="set-goals-btn" title="تنظیم اهداف"><i class="fas fa-cog"></i></button></div><div id="goals-display"><div class="goal-tracker"><div class="goal-header"><span>هدف درآمد</span><span id="income-goal-value">تعیین نشده</span></div><div class="progress-bar-container"><div class="progress-bar" id="income-goal-progress" style="width: 0%;"></div></div><div class="goal-footer"><span id="income-goal-current">۰ تومان</span></div></div><div class="goal-tracker"><div class="goal-header"><span>سقف هزینه</span><span id="expense-goal-value">تعیین نشده</span></div><div class="progress-bar-container"><div class="progress-bar" id="expense-goal-progress" style="width: 0%;"></div></div><div class="goal-footer"><span id="expense-goal-current">۰ تومان</span></div></div></div></div><div class="card list-card"><div class="section-header collapsible-header" style="margin-bottom: 0; padding-bottom: 0;"><div class="section-title" style="width: 100%;"><i class="fas fa-chevron-down toggle-icon"></i><h2 style="margin:0; padding:0; border:none; font-size: 18px;">بدهکارترین کارفرمایان</h2></div></div><div class="collapsible-content" id="dashboard-debtors-content"><div id="dashboard-top-debtors"></div></div></div><div class="card list-card"><div class="section-header collapsible-header" style="margin-bottom: 0; padding-bottom: 0;"><div class="section-title" style="width: 100%;"><i class="fas fa-chevron-down toggle-icon"></i><h2 style="margin:0; padding:0; border:none; font-size: 18px;">کارهای تسویه نشده اخیر</h2></div></div><div class="collapsible-content" id="dashboard-unsettled-content"><div id="dashboard-recent-unsettled"></div></div></div></div></div></section>
             
-            <section class="page-content" id="employers-page"><div class="page-back-button-container" data-page-back-btn></div><div class="page-header"><h1>کارفرمایان</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div><div id="employerListView"><div class="section-header"><input type="search" id="employerSearchInput" placeholder="جستجوی کارفرما..." style="max-width: 300px; width:100%;"></div><div id="employersListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;"></div></div><div id="employerDetailView"><button id="backToEmployersList" class="btn btn-secondary" style="width: auto; margin-bottom: 24px;"><i class="fas fa-arrow-right" style="margin-left: 8px;"></i> بازگشت به لیست</button><h1 id="employerDetailName"></h1><div class="dashboard-hero-card card"><div class="hero-metric"><div class="label">جمع کل کارها</div><div class="value" id="employerDetailTotalWork">۰ تومان</div></div><div class="hero-metric-divider"></div><div class="hero-metric main-balance"><div class="label" id="employerDetailBalanceLabel">مانده حساب</div><div class="value" id="employerDetailBalance">۰ تومان</div></div><div class="hero-metric-divider"></div><div class="hero-metric"><div class="label">جمع کل دریافتی‌ها</div><div class="value positive" id="employerDetailTotalPaid">۰ تومان</div></div></div><div class="card"><h2 style="margin-top:0;">کارهای تسویه نشده</h2><div id="employerDetailUnsettledWorks"></div></div><div class="card"><h2 style="margin-top:0;">آخرین دریافتی‌ها</h2><div id="employerDetailRecentPayments"></div></div></div></section>
+            <section class="page-content" id="employers-page"><div class="page-back-button-container" data-page-back-btn></div><div class="page-header"><h1>کارفرمایان</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div><div id="employerListView"><div class="section-header"><input type="search" id="employerSearchInput" placeholder="جستجوی کارفرما..." style="max-width: 300px; width:100%;"></div><div id="employersListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;"></div></div><div id="employerDetailView"><button id="backToEmployersList" class="btn btn-secondary" style="width: auto; margin-bottom: 24px;"><i class="fas fa-arrow-right" style="margin-left: 8px;"></i> بازگشت به لیست</button><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;"><h1 id="employerDetailName" style="margin-bottom: 0;"></h1><button class="action-btn edit-btn" id="editEmployerNameBtn" title="ویرایش نام کارفرما" style="background: var(--warning-color); color: white; border: none;"><i class="fas fa-pencil-alt"></i></button></div><div class="dashboard-hero-card card"><div class="hero-metric"><div class="label">جمع کل کارها</div><div class="value" id="employerDetailTotalWork">۰ تومان</div></div><div class="hero-metric-divider"></div><div class="hero-metric main-balance"><div class="label" id="employerDetailBalanceLabel">مانده حساب</div><div class="value" id="employerDetailBalance">۰ تومان</div></div><div class="hero-metric-divider"></div><div class="hero-metric"><div class="label">جمع کل دریافتی‌ها</div><div class="value positive" id="employerDetailTotalPaid">۰ تومان</div></div></div><div class="card"><h2 style="margin-top:0;">کارهای تسویه نشده</h2><div id="employerDetailUnsettledWorks"></div></div><div class="card"><h2 style="margin-top:0;">آخرین دریافتی‌ها</h2><div id="employerDetailRecentPayments"></div></div></div></section>
 
             <section class="page-content" id="works-page"><div class="page-header"><h1>مدیریت کارها</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div><div id="works-filters" class="card"><div style="display: flex; gap: 10px; flex-wrap: wrap;"><input type="search" id="workSearchInput" placeholder="جستجوی کار..." style="flex-grow: 1; min-width: 200px;"><select id="workEmployerFilter" style="flex-grow: 1; min-width: 200px;"></select></div></div><div class="card"><div class="section-header collapsible-header"><div class="section-title"><i class="fas fa-chevron-down toggle-icon"></i>لیست کارها</div><div class="section-count" id="worksCount">0 مورد</div></div><div class="works-list collapsible-content" id="worksList"></div><div class="pagination-controls" id="worksPagination"></div></div></section>
             
             <section class="page-content" id="payments-page"><div class="page-back-button-container" data-page-back-btn></div><div class="page-header"><h1>دریافتی‌ها</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div><div class="card" id="payments-filters"><input type="search" id="paymentSearchInput" placeholder="جستجوی دریافتی بر اساس کارفرما یا توضیحات..."></div><div class="card"><div class="section-header collapsible-header"><div class="section-title" style="flex-grow: 1;"><i class="fas fa-chevron-down toggle-icon"></i>لیست دریافتی‌ها</div><div class="section-count" id="paymentsCount">0 مورد</div></div><div class="payments-list collapsible-content" id="paymentsList"></div></div></section>
             
-            <section class="page-content" id="expenses-page"><div class="page-back-button-container" data-page-back-btn></div><div class="page-header"><h1>هزینه‌ها</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div><div class="card" id="expenses-filters"><input type="search" id="expenseSearchInput" placeholder="جستجوی هزینه بر اساس عنوان یا توضیحات..."></div><div class="card"><div class="section-header collapsible-header"><div class="section-title" style="flex-grow: 1;"><i class="fas fa-chevron-down toggle-icon"></i>لیست هزینه‌ها</div><div class="section-count" id="expensesCount">0 مورد</div></div><div class="expenses-list collapsible-content" id="expensesList"></div></div></section>
+            <section class="page-content" id="expenses-page">
+                <div class="page-back-button-container" data-page-back-btn></div>
+                <div class="page-header"><h1>هزینه‌ها</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div>
+                <div class="card">
+                    <h2 style="margin-top: 0;">دسته‌بندی هزینه‌ها</h2>
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="expenseCategoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card" id="expenses-filters"><input type="search" id="expenseSearchInput" placeholder="جستجوی هزینه بر اساس عنوان یا توضیحات..."></div>
+                <div class="card"><div class="section-header collapsible-header"><div class="section-title" style="flex-grow: 1;"><i class="fas fa-chevron-down toggle-icon"></i>لیست هزینه‌ها</div><div class="section-count" id="expensesCount">0 مورد</div></div><div class="expenses-list collapsible-content" id="expensesList"></div></div>
+            </section>
 
             <section class="page-content" id="settings-page">
                 <div class="page-back-button-container" data-page-back-btn></div>
                 <div class="page-header"><h1>تنظیمات</h1><button id="header-theme-toggle" class="header-theme-toggle-btn"><span class="theme-icon-wrapper"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></span></button></div>
                 
-                <!-- <<< اصلاح: انتخاب‌گر تم جدید -->
                 <div class="card">
                     <h2 style="margin-top:0; border: none; padding: 0;">حالت نمایش (تم)</h2>
                     <div class="theme-selector" id="theme-selector">
-                        <div>
-                            <input type="radio" id="theme-light" name="theme" value="theme-light">
-                            <label for="theme-light">
-                                <span class="theme-preview preview-light"><i class="fas fa-sun"></i></span>
-                                <span>روشن</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="theme-dark" name="theme" value="theme-dark">
-                            <label for="theme-dark">
-                                <span class="theme-preview preview-dark"><i class="fas fa-moon"></i></span>
-                                <span>تاریک</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="theme-green" name="theme" value="theme-green">
-                            <label for="theme-green">
-                                <span class="theme-preview preview-green"><i class="fas fa-leaf"></i></span>
-                                <span>سبز</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="theme-midnight" name="theme" value="theme-midnight">
-                            <label for="theme-midnight">
-                                <span class="theme-preview preview-midnight"><i class="fas fa-star"></i></span>
-                                <span>نیمه‌شب</span>
-                            </label>
-                        </div>
+                        <div><input type="radio" id="theme-light" name="theme" value="theme-light"><label for="theme-light"><span class="theme-preview preview-light"><i class="fas fa-sun"></i></span><span>روشن</span></label></div>
+                        <div><input type="radio" id="theme-dark" name="theme" value="theme-dark"><label for="theme-dark"><span class="theme-preview preview-dark"><i class="fas fa-moon"></i></span><span>تاریک</span></label></div>
+                        <div><input type="radio" id="theme-midnight" name="theme" value="theme-midnight"><label for="theme-midnight"><span class="theme-preview preview-midnight"><i class="fas fa-star"></i></span><span>نیمه‌شب</span></label></div>
+                        <div><input type="radio" id="theme-green" name="theme" value="theme-green"><label for="theme-green"><span class="theme-preview preview-green"><i class="fas fa-leaf"></i></span><span>سبز</span></label></div>
+                        <div><input type="radio" id="theme-ocean" name="theme" value="theme-ocean"><label for="theme-ocean"><span class="theme-preview preview-ocean"><i class="fas fa-water"></i></span><span>اقیانوس</span></label></div>
+                         <div><input type="radio" id="theme-royal" name="theme" value="theme-royal"><label for="theme-royal"><span class="theme-preview preview-royal"><i class="fas fa-crown"></i></span><span>سلطنتی</span></label></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 style="margin-top:0;">امنیت</h2>
+                    <p style="margin-bottom: 16px;">برای محافظت از اطلاعات مالی خود می‌توانید رمز عبور (PIN) تعیین کنید.</p>
+                    <div id="security-settings-area" style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="setup-pin-btn" style="width: auto;">فعال‌سازی رمز عبور</button>
+                        <button class="btn btn-danger" id="remove-pin-btn" style="width: auto; display: none;">حذف رمز عبور</button>
                     </div>
                 </div>
 
                 <div class="card"><h2 style="margin-top:0;">راهنمای برنامه</h2><p style="margin-bottom: 24px;">برای آشنایی با بخش‌های مختلف برنامه، می‌توانید راهنمای سریع را مجدداً مشاهده کنید.</p><button class="btn btn-info" id="start-tour-btn" style="width: auto;"><i class="fas fa-play" style="margin-left: 8px;"></i>شروع راهنمای سریع</button></div>
-                <div class="card"><h2 style="margin-top:0;">پشتیبان‌گیری و بازیابی</h2><p style="margin-bottom: 24px;">می‌توانید از اطلاعات خود پشتیبان تهیه کرده و در صورت نیاز آن‌ها را بازیابی کنید. با بازیابی فایل، تمام اطلاعات فعلی پاک خواهد شد.</p><div class="backup-section" style="display: flex; gap: 16px;"><button class="btn btn-secondary" id="downloadBackupBtn"><i class="fas fa-download"></i> دانلود پشتیبان</button><label for="uploadBackup" class="btn btn-success"><i class="fas fa-upload"></i> بازیابی از فایل</label><input type="file" id="uploadBackup" accept=".json" style="display: none;"></div></div>
-                <div class="card"><h2 style="margin-top:0;">ایجاد گزارش سفارشی</h2><div class="custom-report-form" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;"><div class="form-group"><label for="reportStartDate">از تاریخ</label><input type="text" id="reportStartDate" placeholder="مثال: 1403/01/01"></div><div class="form-group"><label for="reportEndDate">تا تاریخ</label><input type="text" id="reportEndDate" placeholder="مثال: 1403/01/31"></div><button class="btn btn-light" id="generateCustomReportBtn">ایجاد پیش‌نمایش گزارش</button></div></div>
+                <div class="card">
+                    <h2 style="margin-top:0;">پشتیبان‌گیری و خروجی</h2>
+                    <p style="margin-bottom: 24px;">خروجی اکسل برای چاپ و گزارش‌دهی، و فایل پشتیبان برای بازگردانی اطلاعات در دستگاه دیگر.</p>
+                    <div class="backup-section" style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <button class="btn btn-success" id="exportExcelBtn" style="width: auto;"><i class="fas fa-file-excel"></i> خروجی اکسل</button>
+                        <button class="btn btn-secondary" id="downloadBackupBtn" style="width: auto;"><i class="fas fa-download"></i> دانلود فایل پشتیبان</button>
+                        <label for="uploadBackup" class="btn btn-light" style="width: auto; margin-bottom: 0;"><i class="fas fa-upload"></i> بازیابی از فایل</label>
+                        <input type="file" id="uploadBackup" accept=".json" style="display: none;">
+                    </div>
+                </div>
+                <div class="card"><h2 style="margin-top:0;">ایجاد گزارش سفارشی</h2><div class="custom-report-form" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;"><div class="form-group"><label for="reportStartDate">از تاریخ</label><input type="text" inputmode="numeric" id="reportStartDate" placeholder="مثال: 1403/01/01"></div><div class="form-group"><label for="reportEndDate">تا تاریخ</label><input type="text" inputmode="numeric" id="reportEndDate" placeholder="مثال: 1403/01/31"></div><button class="btn btn-light" id="generateCustomReportBtn">ایجاد پیش‌نمایش گزارش</button></div></div>
                 <div class="card"><div class="section-header collapsible-header"><div class="section-title"><i class="fas fa-chevron-down toggle-icon"></i>کارهای بایگانی‌شده</div><div class="section-count" id="archivedWorksCount">0 مورد</div></div><div class="archive-list collapsible-content" id="archivedWorksList"></div></div>
                 <div class="card"><div class="section-header collapsible-header"><div class="section-title"><i class="fas fa-chevron-down toggle-icon"></i>دریافتی‌های بایگانی‌شده</div><div class="section-count" id="archivedPaymentsCount">0 مورد</div></div><div class="archive-list collapsible-content" id="archivedPaymentsList"></div></div>
             </section>
@@ -438,76 +515,8 @@
         let previousPageId = null;
 
         const DOM = { 
-            body: document.body, 
-            notification: document.getElementById('notification'), 
-            navBtns: document.querySelectorAll('.sidebar .nav-btn'), 
-            mobileNavBtns: document.querySelectorAll('.mobile-nav .nav-btn'), 
-            mobileFabCenter: document.getElementById('mobile-fab-center'),
-            headerThemeToggles: document.querySelectorAll('.header-theme-toggle-btn'), 
-            pageContents: document.querySelectorAll('.page-content'), 
-            pageBackButtonContainers: document.querySelectorAll('[data-page-back-btn]'),
-            themeSelector: document.getElementById('theme-selector'), // <<< جدید
-            startTourBtn: document.getElementById('start-tour-btn'),
-            dashboardBalance: document.getElementById('dashboard-balance'), 
-            dashboardBalanceLabel: document.getElementById('dashboard-balance-label'), 
-            dashboardMonthlyIncome: document.getElementById('dashboard-monthly-income'), 
-            dashboardMonthlyExpenses: document.getElementById('dashboard-monthly-expenses'), 
-            dashboardTopDebtors: document.getElementById('dashboard-top-debtors'), 
-            dashboardRecentUnsettled: document.getElementById('dashboard-recent-unsettled'), 
-            incomeExpenseChart: document.getElementById('incomeExpenseChart'), 
-            dashboardDebtorsContent: document.getElementById('dashboard-debtors-content'), 
-            dashboardUnsettledContent: document.getElementById('dashboard-unsettled-content'), 
-            setGoalsBtn: document.getElementById('set-goals-btn'), 
-            incomeGoalValue: document.getElementById('income-goal-value'), 
-            incomeGoalProgress: document.getElementById('income-goal-progress'), 
-            incomeGoalCurrent: document.getElementById('income-goal-current'), 
-            expenseGoalValue: document.getElementById('expense-goal-value'), 
-            expenseGoalProgress: document.getElementById('expense-goal-progress'), 
-            expenseGoalCurrent: document.getElementById('expense-goal-current'), 
-            employerListView: document.getElementById('employerListView'), 
-            employerDetailView: document.getElementById('employerDetailView'), 
-            employersListContainer: document.getElementById('employersListContainer'), 
-            employerSearchInput: document.getElementById('employerSearchInput'), 
-            backToEmployersListBtn: document.getElementById('backToEmployersList'), 
-            employerDetailName: document.getElementById('employerDetailName'), 
-            employerDetailTotalWork: document.getElementById('employerDetailTotalWork'), 
-            employerDetailBalance: document.getElementById('employerDetailBalance'), 
-            employerDetailBalanceLabel: document.getElementById('employerDetailBalanceLabel'), 
-            employerDetailTotalPaid: document.getElementById('employerDetailTotalPaid'), 
-            employerDetailUnsettledWorks: document.getElementById('employerDetailUnsettledWorks'), 
-            employerDetailRecentPayments: document.getElementById('employerDetailRecentPayments'), 
-            worksList: document.getElementById('worksList'), 
-            worksPagination: document.getElementById('worksPagination'), 
-            worksCount: document.getElementById('worksCount'), 
-            workSearchInput: document.getElementById('workSearchInput'), 
-            workEmployerFilter: document.getElementById('workEmployerFilter'), 
-            paymentsList: document.getElementById('paymentsList'), 
-            paymentsCount: document.getElementById('paymentsCount'), 
-            paymentSearchInput: document.getElementById('paymentSearchInput'), 
-            monthlyChart: document.getElementById('monthlyChart'), 
-            expensesList: document.getElementById('expensesList'), 
-            expensesCount: document.getElementById('expensesCount'), 
-            expenseSearchInput: document.getElementById('expenseSearchInput'), 
-            reportStartDateInput: document.getElementById('reportStartDate'), 
-            reportEndDateInput: document.getElementById('reportEndDate'), 
-            generateCustomReportBtn: document.getElementById('generateCustomReportBtn'), 
-            archivedWorksList: document.getElementById('archivedWorksList'), 
-            archivedWorksCount: document.getElementById('archivedWorksCount'), 
-            archivedPaymentsList: document.getElementById('archivedPaymentsList'), 
-            archivedPaymentsCount: document.getElementById('archivedPaymentsCount'), 
-            downloadBackupBtn: document.getElementById('downloadBackupBtn'), 
-            uploadBackupInput: document.getElementById('uploadBackup'), 
-            reportModal: document.getElementById('report-modal'), 
-            reportModalBody: document.getElementById('report-modal-body'), 
-            formModal: document.getElementById('form-modal'), 
-            formModalTitle: document.getElementById('form-modal-title'), 
-            formModalBody: document.getElementById('form-modal-body'), 
-            confirmModal: document.getElementById('confirm-modal'), 
-            confirmModalTitle: document.getElementById('confirm-modal-title'), 
-            confirmModalText: document.getElementById('confirm-modal-text'), 
-            confirmModalOk: document.getElementById('confirm-modal-ok'), 
-            confirmModalCancel: document.getElementById('confirm-modal-cancel'),
-            morePageLinks: document.querySelectorAll('.more-menu-item[data-page-link]')
+            body: document.body, notification: document.getElementById('notification'), navBtns: document.querySelectorAll('.sidebar .nav-btn'), mobileNavBtns: document.querySelectorAll('.mobile-nav .nav-btn'), mobileFabCenter: document.getElementById('mobile-fab-center'), headerThemeToggles: document.querySelectorAll('.header-theme-toggle-btn'), pageContents: document.querySelectorAll('.page-content'), pageBackButtonContainers: document.querySelectorAll('[data-page-back-btn]'), themeSelector: document.getElementById('theme-selector'), startTourBtn: document.getElementById('start-tour-btn'), dashboardBalance: document.getElementById('dashboard-balance'), dashboardBalanceLabel: document.getElementById('dashboard-balance-label'), dashboardMonthlyIncome: document.getElementById('dashboard-monthly-income'), dashboardMonthlyExpenses: document.getElementById('dashboard-monthly-expenses'), dashboardTopDebtors: document.getElementById('dashboard-top-debtors'), dashboardRecentUnsettled: document.getElementById('dashboard-recent-unsettled'), incomeExpenseChart: document.getElementById('incomeExpenseChart'), dashboardDebtorsContent: document.getElementById('dashboard-debtors-content'), dashboardUnsettledContent: document.getElementById('dashboard-unsettled-content'), setGoalsBtn: document.getElementById('set-goals-btn'), incomeGoalValue: document.getElementById('income-goal-value'), incomeGoalProgress: document.getElementById('income-goal-progress'), incomeGoalCurrent: document.getElementById('income-goal-current'), expenseGoalValue: document.getElementById('expense-goal-value'), expenseGoalProgress: document.getElementById('expense-goal-progress'), expenseGoalCurrent: document.getElementById('expense-goal-current'), employerListView: document.getElementById('employerListView'), employerDetailView: document.getElementById('employerDetailView'), employersListContainer: document.getElementById('employersListContainer'), employerSearchInput: document.getElementById('employerSearchInput'), backToEmployersListBtn: document.getElementById('backToEmployersList'), employerDetailName: document.getElementById('employerDetailName'), editEmployerNameBtn: document.getElementById('editEmployerNameBtn'), employerDetailTotalWork: document.getElementById('employerDetailTotalWork'), employerDetailBalance: document.getElementById('employerDetailBalance'), employerDetailBalanceLabel: document.getElementById('employerDetailBalanceLabel'), employerDetailTotalPaid: document.getElementById('employerDetailTotalPaid'), employerDetailUnsettledWorks: document.getElementById('employerDetailUnsettledWorks'), employerDetailRecentPayments: document.getElementById('employerDetailRecentPayments'), worksList: document.getElementById('worksList'), worksPagination: document.getElementById('worksPagination'), worksCount: document.getElementById('worksCount'), workSearchInput: document.getElementById('workSearchInput'), workEmployerFilter: document.getElementById('workEmployerFilter'), paymentsList: document.getElementById('paymentsList'), paymentsCount: document.getElementById('paymentsCount'), paymentSearchInput: document.getElementById('paymentSearchInput'), monthlyChart: document.getElementById('monthlyChart'), expensesList: document.getElementById('expensesList'), expensesCount: document.getElementById('expensesCount'), expenseSearchInput: document.getElementById('expenseSearchInput'), expenseCategoryChart: document.getElementById('expenseCategoryChart'), reportStartDateInput: document.getElementById('reportStartDate'), reportEndDateInput: document.getElementById('reportEndDate'), generateCustomReportBtn: document.getElementById('generateCustomReportBtn'), archivedWorksList: document.getElementById('archivedWorksList'), archivedWorksCount: document.getElementById('archivedWorksCount'), archivedPaymentsList: document.getElementById('archivedPaymentsList'), archivedPaymentsCount: document.getElementById('archivedPaymentsCount'), downloadBackupBtn: document.getElementById('downloadBackupBtn'), uploadBackupInput: document.getElementById('uploadBackup'), reportModal: document.getElementById('report-modal'), reportModalBody: document.getElementById('report-modal-body'), formModal: document.getElementById('form-modal'), formModalTitle: document.getElementById('form-modal-title'), formModalBody: document.getElementById('form-modal-body'), confirmModal: document.getElementById('confirm-modal'), confirmModalTitle: document.getElementById('confirm-modal-title'), confirmModalText: document.getElementById('confirm-modal-text'), confirmModalOk: document.getElementById('confirm-modal-ok'), confirmModalCancel: document.getElementById('confirm-modal-cancel'), morePageLinks: document.querySelectorAll('.more-menu-item[data-page-link]'),
+            lockScreen: document.getElementById('lock-screen'), pinTitle: document.getElementById('pin-title'), pinDots: document.getElementById('pin-dots'), numpad: document.getElementById('numpad'), setupPinBtn: document.getElementById('setup-pin-btn'), removePinBtn: document.getElementById('remove-pin-btn'), exportExcelBtn: document.getElementById('exportExcelBtn')
         };
         const expenseCategories = ['عمومی', 'حمل و نقل', 'اینترنت و ارتباطات', 'نرم‌افزار و ابزار', 'مواد اولیه', 'مالیات', 'متفرقه'];
         const emptyStateWorksEl = `<div class="empty-state"><i class="fas fa-clipboard-list"></i><p>هنوز کاری اضافه نکرده‌اید</p></div>`;
@@ -517,14 +526,171 @@
         const emptyStateArchivedPaymentsEl = `<div class="empty-state"><i class="fas fa-archive"></i><p>هیچ دریافتی بایگانی نشده است</p></div>`;
         const emptyStateEmployersEl = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-users"></i><p>هنوز کارفرمایی ثبت نشده است.</p></div>`;
         let state = { works: [], payments: [], expenses: [], archive: [], goals: {}, collapsibleStates: {}, editingItemId: null, editingItemType: null, pagination: { works: { currentPage: 1, itemsPerPage: 10 } } };
-        let myChart = null, incomeExpenseChart = null, undoTimeout = null;
+        let myChart = null, incomeExpenseChart = null, expenseChart = null, undoTimeout = null;
         let lastDeleted = { item: null, type: null, sourceArray: null, index: -1 };
         const monthNames = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
         const formatNumber = (number) => new Intl.NumberFormat('fa-IR').format(number);
+
+        const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+        
+        /* --- PIN System Logic --- */
+        let pinState = { currentInput: '', mode: 'login', tempPin: null }; 
+        
+        function initPinSystem() {
+            const savedPin = localStorage.getItem('app_pin');
+            if (savedPin) {
+                showLockScreen('login');
+            } else {
+                DOM.lockScreen.classList.add('hidden');
+            }
+            updateSecurityButtons();
+
+            DOM.numpad.addEventListener('click', (e) => {
+                const btn = e.target.closest('.num-btn');
+                if (!btn) return;
+                const num = btn.dataset.num;
+                const action = btn.dataset.action;
+                if (num !== undefined) handlePinInput(num);
+                if (action === 'delete') handlePinDelete();
+            });
+
+            DOM.setupPinBtn.addEventListener('click', () => showLockScreen('create'));
+            DOM.removePinBtn.addEventListener('click', () => {
+                showConfirmModal('حذف رمز عبور', 'آیا مطمئن هستید که می‌خواهید رمز عبور را حذف کنید؟', () => {
+                    localStorage.removeItem('app_pin');
+                    updateSecurityButtons();
+                    showNotification('رمز عبور با موفقیت حذف شد.', 'success');
+                });
+            });
+        }
+
+        function updateSecurityButtons() {
+            const hasPin = !!localStorage.getItem('app_pin');
+            DOM.setupPinBtn.style.display = hasPin ? 'none' : 'block';
+            DOM.removePinBtn.style.display = hasPin ? 'block' : 'none';
+        }
+
+        function showLockScreen(mode) {
+            pinState.mode = mode;
+            pinState.currentInput = '';
+            pinState.tempPin = null;
+            DOM.lockScreen.classList.remove('hidden');
+            updatePinUI();
+            
+            if (mode === 'login') DOM.pinTitle.textContent = 'رمز عبور را وارد کنید';
+            else if (mode === 'create') DOM.pinTitle.textContent = 'یک رمز عبور ۴ رقمی انتخاب کنید';
+        }
+
+        function handlePinInput(num) {
+            if (pinState.currentInput.length < 4) {
+                pinState.currentInput += num;
+                updatePinUI();
+                if (pinState.currentInput.length === 4) {
+                    setTimeout(processPin, 100);
+                }
+            }
+        }
+
+        function handlePinDelete() {
+            if (pinState.currentInput.length > 0) {
+                pinState.currentInput = pinState.currentInput.slice(0, -1);
+                updatePinUI();
+            }
+        }
+
+        function updatePinUI() {
+            const dots = DOM.pinDots.children;
+            for (let i = 0; i < 4; i++) {
+                if (i < pinState.currentInput.length) dots[i].classList.add('filled');
+                else dots[i].classList.remove('filled');
+                dots[i].classList.remove('error');
+            }
+        }
+
+        function processPin() {
+            const input = pinState.currentInput;
+            const savedPin = localStorage.getItem('app_pin');
+
+            if (pinState.mode === 'login') {
+                if (input === savedPin) {
+                    DOM.lockScreen.classList.add('hidden');
+                } else {
+                    triggerPinError();
+                }
+            } else if (pinState.mode === 'create') {
+                pinState.tempPin = input;
+                pinState.mode = 'confirm';
+                pinState.currentInput = '';
+                DOM.pinTitle.textContent = 'رمز عبور را تکرار کنید';
+                updatePinUI();
+            } else if (pinState.mode === 'confirm') {
+                if (input === pinState.tempPin) {
+                    localStorage.setItem('app_pin', input);
+                    DOM.lockScreen.classList.add('hidden');
+                    updateSecurityButtons();
+                    showNotification('رمز عبور با موفقیت فعال شد.', 'success');
+                } else {
+                    triggerPinError();
+                    setTimeout(() => {
+                         pinState.mode = 'create';
+                         DOM.pinTitle.textContent = 'رمزها مطابقت نداشتند. مجددا رمز را انتخاب کنید';
+                         pinState.currentInput = '';
+                         updatePinUI();
+                    }, 500);
+                }
+            }
+        }
+
+        function triggerPinError() {
+            const dots = DOM.pinDots.children;
+            for (let dot of dots) dot.classList.add('error');
+            setTimeout(() => {
+                pinState.currentInput = '';
+                updatePinUI();
+            }, 400);
+        }
+
+        /* --- Excel Export Logic --- */
+        function exportToCSV() {
+            const works = state.works;
+            const payments = state.payments;
+            const expenses = state.expenses;
+
+            let csvContent = "\uFEFF"; // BOM for utf-8
+            csvContent += "نوع,عنوان/کارفرما,توضیحات/دسته,مبلغ (تومان),تاریخ,وضعیت\n";
+
+            works.forEach(w => {
+                const date = toJalali(w.dateAdded);
+                const status = w.paidAmount >= w.total ? "تسویه شده" : "بدهکار";
+                csvContent += `کار,${w.employer},${w.type},${w.total},${date},${status}\n`;
+            });
+
+            payments.forEach(p => {
+                const date = p.jalaliDate || toJalali(p.date);
+                csvContent += `دریافتی,${p.employer},${p.description || '-'},${p.amount},${date},-\n`;
+            });
+
+            expenses.forEach(e => {
+                const date = e.jalaliDate || toJalali(e.date);
+                csvContent += `هزینه,${e.title},${e.category},${e.amount},${date},-\n`;
+            });
+
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            const dateStr = new Date().toISOString().slice(0,10);
+            link.setAttribute("download", `financial_report_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification('فایل اکسل با موفقیت دانلود شد.', 'success');
+        }
+
+        /* --- Original Functions --- */
         function showNotification(message, type = 'info', action = null) { clearTimeout(undoTimeout); let actionButtonHTML = ''; if (action && action.text && typeof action.onClick === 'function') { actionButtonHTML = `<button class="btn btn-light" style="margin-right: 20px; padding: 5px 10px; width: auto; font-size: 14px;" id="notification-action-btn">${action.text}</button>`; } DOM.notification.innerHTML = `<span>${message}</span>${actionButtonHTML}`; DOM.notification.className = `notification ${type}`; DOM.notification.style.display = 'flex'; if (actionButtonHTML) { document.getElementById('notification-action-btn').addEventListener('click', action.onClick); } const timeoutDuration = action ? 7000 : 4000; undoTimeout = setTimeout(() => { DOM.notification.style.display = 'none'; if (action && lastDeleted.item) finalizeDelete(); }, timeoutDuration); }
         const saveToLocalStorage = () => localStorage.setItem('data', JSON.stringify(state));
         function loadFromLocalStorage() { const savedData = localStorage.getItem('data'); if (savedData) { const loadedState = JSON.parse(savedData); state = { ...state, ...loadedState }; state.editingItemId = null; state.editingItemType = null; state.expenses = state.expenses || []; state.archive = state.archive || []; state.goals = loadedState.goals || {}; state.collapsibleStates = loadedState.collapsibleStates || {}; state.pagination = loadedState.pagination || { works: { currentPage: 1, itemsPerPage: 10 } }; state.works.forEach(work => { if (work.paidAmount === undefined) work.paidAmount = 0; if (work.dateStarted === undefined) work.dateStarted = null; if (work.dateFinished === undefined) work.dateFinished = null; }); state.expenses.forEach(exp => { if (!exp.category) exp.category = 'عمومی'; }); } }
-        function addOrUpdateCredit(employerName, amount, reasonText = 'اعتبار') { if (amount <= 0) return; let creditWork = state.works.find(w => w.employer === employerName && w.isCredit); if (creditWork) { creditWork.total -= amount; } else { state.works.unshift({ id: Date.now(), employer: employerName, type: reasonText, isCredit: true, total: -amount, paidAmount: 0, count: 1, price: -amount, dateAdded: new Date().toISOString() }); } showNotification(`مبلغ ${formatNumber(amount)} تومان به عنوان اعتبار برای "${employerName}" ثبت شد.`, 'success'); }
+        function addOrUpdateCredit(employerName, amount, reasonText = 'اعتبار') { if (amount <= 0) return; let creditWork = state.works.find(w => w.employer === employerName && w.isCredit); if (creditWork) { creditWork.total -= amount; } else { state.works.unshift({ id: generateUniqueId(), employer: employerName, type: reasonText, isCredit: true, total: -amount, paidAmount: 0, count: 1, price: -amount, dateAdded: new Date().toISOString() }); } showNotification(`مبلغ ${formatNumber(amount)} تومان به عنوان اعتبار برای "${employerName}" ثبت شد.`, 'success'); }
         function toJalali(date) { if (!date) return ''; return moment(new Date(date)).format('jYYYY/jMM/jDD'); }
         function parseFlexibleJalali(dateStr) { if (!dateStr || typeof dateStr !== 'string') return null; const parts = dateStr.split(/[\/-]/); if (parts.length !== 3) return null; const yearIndex = parts.findIndex(p => p.length === 4); const yearFirstFormats = ['jYYYY/jM/jD', 'jYYYY/jMM/jD', 'jYYYY/jM/jDD', 'jYYYY/jMM/jDD']; const dayFirstFormats = ['jD/jM/jYYYY', 'jD/jMM/jYYYY', 'jDD/jM/jYYYY', 'jDD/jMM/jYYYY']; let m; if (yearIndex === 0) { m = moment(dateStr, yearFirstFormats, 'fa', true); } else if (yearIndex === 2) { m = moment(dateStr, dayFirstFormats, 'fa', true); } else { return null; } return m.isValid() ? m : null; }
         function isValidJalaliDate(dateStr) { return parseFlexibleJalali(dateStr) !== null; }
@@ -564,80 +730,325 @@
                     }
                 });
 
-                if (pageId === 'employers-page') updateEmployersList();
-                if (pageId === 'reports-page') updateMonthlyChart();
-                
                 updateAll();
 
-                // منتظر می‌مانیم تا انیمیشن نمایش صفحه تمام شود
                 setTimeout(() => {
                     resolve();
-                }, 550); // کمی بیشتر از زمان انیمیشن (0.5s)
+                }, 550);
             });
         }
 
         function populateEmployerDropdown(selectElement) { if (!selectElement) return; const employers = [...new Set(state.works.filter(w => !w.isCredit).map(w => w.employer))]; selectElement.innerHTML = ''; if (employers.length === 0) { selectElement.innerHTML = '<option value="">ابتدا یک کار برای یک کارفرما ثبت کنید</option>'; selectElement.disabled = true; } else { selectElement.disabled = false; employers.sort().forEach(emp => selectElement.add(new Option(emp, emp))); } }
-        function showFormInModal(title, templateId, setupFunction) { DOM.formModalTitle.textContent = title; const template = document.getElementById(templateId); if (!template) return console.error(`Template with id "${templateId}" not found.`); const formContent = template.content.cloneNode(true); DOM.formModalBody.innerHTML = ''; DOM.formModalBody.appendChild(formContent); if (setupFunction) setupFunction(DOM.formModalBody); DOM.formModal.style.display = 'flex'; }
+        function showFormInModal(title, templateId, setupFunction) { DOM.formModalTitle.textContent = title; const template = document.getElementById(templateId); if (!template) return console.error(`Template with id "${templateId}" not found.`); const formContent = template.content.cloneNode(true); DOM.formModalBody.innerHTML = ''; DOM.formModalBody.appendChild(formContent); if (setupFunction) setupFunction(DOM.formModalBody); DOM.formModal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
         function showConfirmModal(title, text, onConfirm) { DOM.confirmModalTitle.textContent = title; DOM.confirmModalText.textContent = text; DOM.confirmModal.style.display = 'flex'; DOM.confirmModalOk.onclick = () => { onConfirm(); DOM.confirmModal.style.display = 'none'; }; DOM.confirmModalCancel.onclick = () => { DOM.confirmModal.style.display = 'none'; }; }
-        function updateAll() { updateDashboard(); updateWorksList(); updatePaymentsList(); updateExpensesList(); updateArchiveLists(); updateCounts(); populateWorkEmployerFilter(); updateEmployerDatalist(); updateEmployersList(); }
+        
+        function updateAll() { 
+            saveToLocalStorage();
+            updateDashboard(); 
+            updateWorksList(); 
+            updatePaymentsList(); 
+            updateExpensesList(); 
+            updateArchiveLists(); 
+            updateCounts(); 
+            populateWorkEmployerFilter(); 
+            updateEmployerDatalist(); 
+            updateEmployersList();
+            if (activePageId === 'reports-page') updateMonthlyChart();
+            if (activePageId === 'expenses-page') updateExpenseChart();
+        }
+
         function updateCounts() { DOM.worksCount.textContent = `${state.works.length} مورد`; DOM.paymentsCount.textContent = `${state.payments.length} مورد`; DOM.expensesCount.textContent = `${state.expenses.length} مورد`; DOM.archivedWorksCount.textContent = `${state.archive.filter(item => item.itemType === ITEM_TYPES.WORK).length} مورد`; DOM.archivedPaymentsCount.textContent = `${state.archive.filter(item => item.itemType === ITEM_TYPES.PAYMENT).length} مورد`; }
         
-        // <<< اصلاح: تابع setTheme برای پشتیبانی از چندین تم
         function setTheme(themeName) {
-            DOM.body.classList.remove('theme-light', 'theme-dark', 'theme-green', 'theme-midnight');
-            if (themeName !== 'theme-light') { // 'theme-light' is the default with no class
+            const ALL_THEMES = ['theme-dark', 'theme-green', 'theme-midnight', 'theme-ocean', 'theme-royal'];
+            DOM.body.classList.remove(...ALL_THEMES);
+            if (themeName !== 'theme-light') {
                 DOM.body.classList.add(themeName);
             }
             localStorage.setItem('theme', themeName);
 
-            // Update radio buttons
-            const radioToCheck = document.getElementById(themeName.replace('theme-','theme-'));
+            const radioToCheck = document.getElementById(themeName);
             if(radioToCheck) radioToCheck.checked = true;
 
-            // Update charts
-            if (myChart) updateMonthlyChart();
-            if (incomeExpenseChart) updateIncomeExpenseChart();
+            setTimeout(() => {
+                if (myChart) updateMonthlyChart();
+                if (incomeExpenseChart) updateIncomeExpenseChart();
+                if (expenseChart) updateExpenseChart();
+            }, 50);
         }
 
         function updateDashboard() { const totalWorkValue = state.works.reduce((sum, work) => sum + work.total, 0); const totalExpenses = state.expenses.reduce((sum, e) => sum + e.amount, 0); const netBalance = totalWorkValue - totalExpenses; DOM.dashboardBalance.textContent = `${formatNumber(Math.abs(netBalance))} تومان`; DOM.dashboardBalance.className = `value ${netBalance > 0 ? 'negative' : (netBalance < 0 ? 'positive' : '')}`; DOM.dashboardBalanceLabel.textContent = netBalance > 0 ? 'کل بدهی شما' : (netBalance < 0 ? 'کل بستانکاری شما' : 'مانده کل حساب'); const currentMonthPayments = state.payments.filter(p => getJalaliYearAndMonth(p.date).year === moment().jYear() && getJalaliYearAndMonth(p.date).month === moment().jMonth()).reduce((sum, p) => sum + p.amount, 0); DOM.dashboardMonthlyIncome.textContent = `${formatNumber(currentMonthPayments)} تومان`; const currentMonthExpenses = state.expenses.filter(e => getJalaliYearAndMonth(e.date).year === moment().jYear() && getJalaliYearAndMonth(e.date).month === moment().jMonth()).reduce((sum, e) => sum + e.amount, 0); DOM.dashboardMonthlyExpenses.textContent = `${formatNumber(currentMonthExpenses)} تومان`; const employerTotals = {}; state.works.forEach(work => { employerTotals[work.employer] = (employerTotals[work.employer] || 0) + work.total; }); const topDebtors = Object.entries(employerTotals).map(([employer, balance]) => ({ employer, balance })).filter(item => item.balance > 0).sort((a, b) => b.balance - a.balance).slice(0, 5); DOM.dashboardTopDebtors.innerHTML = topDebtors.length === 0 ? '<p style="text-align: center; color: var(--text-secondary); padding: 20px 0;">هیچ کارفرمای بدهکاری وجود ندارد.</p>' : topDebtors.map(item => `<div class="list-item"><span class="item-name">${item.employer}</span><span class="item-value expense-amount">${formatNumber(item.balance)} ت</span></div>`).join(''); const recentUnsettled = state.works.filter(w => !w.isCredit && w.paidAmount < w.total).sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)).slice(0, 5); DOM.dashboardRecentUnsettled.innerHTML = recentUnsettled.length === 0 ? '<p style="text-align: center; color: var(--text-secondary); padding: 20px 0;">همه کارها تسویه شده‌اند!</p>' : recentUnsettled.map(work => { const remaining = work.total - work.paidAmount; return `<div class="list-item"><div><div class="item-name">${work.employer} - ${work.type}</div><div class="item-meta">${toJalali(work.dateAdded)}</div></div><span class="item-value expense-amount">${formatNumber(remaining)} ت</span></div>`; }).join(''); adjustCollapsibleHeight(DOM.dashboardDebtorsContent); adjustCollapsibleHeight(DOM.dashboardUnsettledContent); updateIncomeExpenseChart(); updateGoalsDisplay(); }
-        function updateIncomeExpenseChart() { if(!DOM.incomeExpenseChart) return; const labels = []; const incomeData = []; const expenseData = []; const m = moment(); for (let i = 5; i >= 0; i--) { const targetMonth = m.clone().subtract(i, 'jMonths'); const year = targetMonth.jYear(); const month = targetMonth.jMonth(); labels.push(monthNames[month]); const monthlyIncome = state.payments.filter(p => { const pDate = getJalaliYearAndMonth(p.date); return pDate.year === year && pDate.month === month; }).reduce((sum, p) => sum + p.amount, 0); incomeData.push(monthlyIncome); const monthlyExpense = state.expenses.filter(e => { const eDate = getJalaliYearAndMonth(e.date); return eDate.year === year && eDate.month === month; }).reduce((sum, e) => sum + e.amount, 0); expenseData.push(monthlyExpense); } if (incomeExpenseChart) incomeExpenseChart.destroy(); const computedStyle = getComputedStyle(DOM.body); const gridColor = computedStyle.getPropertyValue('--border-color'); const textColor = computedStyle.getPropertyValue('--text-primary'); incomeExpenseChart = new Chart(DOM.incomeExpenseChart, { type: 'bar', data: { labels: labels, datasets: [ { label: 'درآمد', data: incomeData, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderRadius: 5 }, { label: 'هزینه', data: expenseData, backgroundColor: 'rgba(239, 68, 68, 0.7)', borderRadius: 5 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } }, plugins: { legend: { position: 'top', labels: { font: { family: 'Vazirmatn, sans-serif' }, color: textColor } } } } }); }
-        function saveGoals(formEl) { const incomeGoal = parseInt(formEl.querySelector('#incomeGoal').value) || 0; const expenseGoal = parseInt(formEl.querySelector('#expenseGoal').value) || 0; const monthKey = `${moment().jYear()}-${moment().jMonth()}`; state.goals[monthKey] = { income: incomeGoal, expenses: expenseGoal }; saveToLocalStorage(); DOM.formModal.style.display = 'none'; showNotification('اهداف ماهانه با موفقیت ذخیره شد.', 'success'); updateGoalsDisplay(); }
+        function updateIncomeExpenseChart() { if(!DOM.incomeExpenseChart) return; const labels = []; const incomeData = []; const expenseData = []; const m = moment(); for (let i = 5; i >= 0; i--) { const targetMonth = m.clone().subtract(i, 'jMonths'); const year = targetMonth.jYear(); const month = targetMonth.jMonth(); labels.push(monthNames[month]); const monthlyIncome = state.payments.filter(p => { const pDate = getJalaliYearAndMonth(p.date); return pDate.year === year && pDate.month === month; }).reduce((sum, p) => sum + p.amount, 0); incomeData.push(monthlyIncome); const monthlyExpense = state.expenses.filter(e => { const eDate = getJalaliYearAndMonth(e.date); return eDate.year === year && eDate.month === month; }).reduce((sum, e) => sum + e.amount, 0); expenseData.push(monthlyExpense); } if (incomeExpenseChart) incomeExpenseChart.destroy(); const computedStyle = getComputedStyle(DOM.body); const gridColor = computedStyle.getPropertyValue('--border-color'); const textColor = computedStyle.getPropertyValue('--text-primary'); incomeExpenseChart = new Chart(DOM.incomeExpenseChart, { type: 'bar', data: { labels: labels, datasets: [ { label: 'درآمد', data: incomeData, backgroundColor: computedStyle.getPropertyValue('--success-color'), borderRadius: 5 }, { label: 'هزینه', data: expenseData, backgroundColor: computedStyle.getPropertyValue('--danger-color'), borderRadius: 5 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } }, plugins: { legend: { position: 'top', labels: { font: { family: 'Vazirmatn, sans-serif' }, color: textColor } } } } }); }
+        function saveGoals(formEl) { const incomeGoal = parseInt(formEl.querySelector('#incomeGoal').value.replace(/,/g, '')) || 0; const expenseGoal = parseInt(formEl.querySelector('#expenseGoal').value.replace(/,/g, '')) || 0; const monthKey = `${moment().jYear()}-${moment().jMonth()}`; state.goals[monthKey] = { income: incomeGoal, expenses: expenseGoal }; DOM.formModal.style.display = 'none'; document.body.style.overflow = ''; showNotification('اهداف ماهانه با موفقیت ذخیره شد.', 'success'); updateGoalsDisplay(); updateAll(); }
         function updateGoalsDisplay() { const monthKey = `${moment().jYear()}-${moment().jMonth()}`; const monthlyGoals = state.goals[monthKey]; const currentMonthIncome = state.payments.filter(p => getJalaliYearAndMonth(p.date).year === moment().jYear() && getJalaliYearAndMonth(p.date).month === moment().jMonth()).reduce((sum, p) => sum + p.amount, 0); const currentMonthExpenses = state.expenses.filter(e => getJalaliYearAndMonth(e.date).year === moment().jYear() && getJalaliYearAndMonth(e.date).month === moment().jMonth()).reduce((sum, e) => sum + e.amount, 0); if (monthlyGoals && monthlyGoals.income > 0) { DOM.incomeGoalValue.textContent = `${formatNumber(monthlyGoals.income)} تومان`; const progress = Math.min((currentMonthIncome / monthlyGoals.income) * 100, 100); DOM.incomeGoalProgress.style.width = `${progress}%`; } else { DOM.incomeGoalValue.textContent = 'تعیین نشده'; DOM.incomeGoalProgress.style.width = '0%'; } DOM.incomeGoalCurrent.textContent = `${formatNumber(currentMonthIncome)} تومان`; if (monthlyGoals && monthlyGoals.expenses > 0) { DOM.expenseGoalValue.textContent = `${formatNumber(monthlyGoals.expenses)} تومان`; const progress = Math.min((currentMonthExpenses / monthlyGoals.expenses) * 100, 100); const progressRatio = currentMonthExpenses / monthlyGoals.expenses; DOM.expenseGoalProgress.style.width = `${progress}%`; if (progressRatio > 1) { DOM.expenseGoalProgress.style.backgroundColor = 'var(--danger-color)'; } else if (progressRatio > 0.8) { DOM.expenseGoalProgress.style.backgroundColor = 'var(--warning-color)'; } else { DOM.expenseGoalProgress.style.backgroundColor = 'var(--success-color)'; } } else { DOM.expenseGoalValue.textContent = 'تعیین نشده'; DOM.expenseGoalProgress.style.width = '0%'; DOM.expenseGoalProgress.style.backgroundColor = 'var(--success-color)'; } DOM.expenseGoalCurrent.textContent = `${formatNumber(currentMonthExpenses)} تومان`; }
         function getEmployerStats(employerName) { const allWorksForEmployer = [...state.works, ...state.archive.filter(item => item.itemType === ITEM_TYPES.WORK)].filter(w => w.employer === employerName); const allPaymentsForEmployer = [...state.payments, ...state.archive.filter(item => item.itemType === ITEM_TYPES.PAYMENT)].filter(p => p.employer === employerName); const totalWorkValue = allWorksForEmployer.filter(w => !w.isCredit).reduce((sum, w) => sum + w.total, 0); const totalPaid = allPaymentsForEmployer.reduce((sum, p) => sum + p.amount, 0); const currentBalance = state.works.filter(w => w.employer === employerName).reduce((sum, w) => sum + w.total, 0); const unsettledWorksCount = state.works.filter(w => w.employer === employerName && !w.isCredit && w.paidAmount < w.total).length; return { totalWorkValue, totalPaid, currentBalance, unsettledWorksCount }; }
         function updateEmployersList() { const searchTerm = DOM.employerSearchInput.value.toLowerCase(); const employerNames = [...new Set([...state.works, ...state.archive].map(item => item.employer).filter(Boolean))]; const filteredNames = employerNames.filter(name => name.toLowerCase().includes(searchTerm)); DOM.employersListContainer.innerHTML = ''; if (filteredNames.length === 0) { DOM.employersListContainer.innerHTML = emptyStateEmployersEl; return; } filteredNames.sort().forEach(name => { const stats = getEmployerStats(name); const card = document.createElement('div'); card.className = 'employer-card'; card.dataset.employerName = name; card.innerHTML = ` <div class="employer-card-header"> <span class="employer-name">${name}</span> <span class="employer-balance ${stats.currentBalance >= 0 ? 'negative' : 'positive'}">${formatNumber(Math.abs(stats.currentBalance))} ت</span> </div> <div class="employer-stats"> <span><i class="fas fa-briefcase"></i> ${stats.unsettledWorksCount} کار باز</span> <span><i class="fas fa-hand-holding-dollar"></i> کل دریافتی: ${formatNumber(stats.totalPaid)} ت</span> </div> `; card.addEventListener('click', () => showEmployerDetail(name)); DOM.employersListContainer.appendChild(card); }); }
         function showEmployerDetail(employerName) { DOM.employerListView.style.display = 'none'; DOM.employerDetailView.style.display = 'block'; const stats = getEmployerStats(employerName); DOM.employerDetailName.textContent = employerName; DOM.employerDetailTotalWork.textContent = `${formatNumber(stats.totalWorkValue)} تومان`; DOM.employerDetailTotalPaid.textContent = `${formatNumber(stats.totalPaid)} تومان`; DOM.employerDetailBalance.textContent = `${formatNumber(Math.abs(stats.currentBalance))} تومان`; DOM.employerDetailBalance.className = `value ${stats.currentBalance >= 0 ? 'negative' : 'positive'}`; DOM.employerDetailBalanceLabel.textContent = stats.currentBalance >= 0 ? 'مانده بدهی' : 'مانده بستانکاری'; const unsettledWorks = state.works.filter(w => w.employer === employerName && !w.isCredit && w.paidAmount < w.total).sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded)); DOM.employerDetailUnsettledWorks.innerHTML = ''; if (unsettledWorks.length === 0) { DOM.employerDetailUnsettledWorks.innerHTML = '<div class="empty-state" style="padding: 20px;"><p>این کارفرما کار تسویه نشده‌ای ندارد.</p></div>'; } else { unsettledWorks.forEach(work => { const item = document.createElement('div'); item.className = 'item'; const remaining = work.total - work.paidAmount; item.innerHTML = `<div class="item-details"><div class="item-name">${work.type}</div><div class="item-meta"><span>تاریخ: ${toJalali(work.dateAdded)}</span><span>کل: ${formatNumber(work.total)} ت</span></div></div><div class="expense-amount">مانده: ${formatNumber(remaining)} ت</div>`; DOM.employerDetailUnsettledWorks.appendChild(item); }); } const recentPayments = state.payments.filter(p => p.employer === employerName).sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5); DOM.employerDetailRecentPayments.innerHTML = ''; if (recentPayments.length === 0) { DOM.employerDetailRecentPayments.innerHTML = '<div class="empty-state" style="padding: 20px;"><p>هیچ دریافتی از این کارفرما ثبت نشده است.</p></div>'; } else { recentPayments.forEach(payment => { const item = document.createElement('div'); item.className = 'item'; item.innerHTML = `<div class="item-details"><div class="item-name">${payment.description || 'دریافتی'}</div><div class="item-meta"><span>تاریخ: ${toJalali(payment.date)}</span></div></div><div class="payment-amount">${formatNumber(payment.amount)} ت</div>`; DOM.employerDetailRecentPayments.appendChild(item); }); } }
-        function startWork(workId) { const work = state.works.find(w => w.id === workId); if (work && !work.dateStarted) { work.dateStarted = new Date().toISOString(); showNotification(`کار "${work.type}" شروع شد.`, 'success'); updateWorksList(); saveToLocalStorage(); } }
-        function finishWork(workId) { const work = state.works.find(w => w.id === workId); if (work && work.dateStarted && !work.dateFinished) { work.dateFinished = new Date().toISOString(); showNotification(`کار "${work.type}" به پایان رسید.`, 'success'); updateWorksList(); saveToLocalStorage(); } else if (work && !work.dateStarted) { showNotification('ابتدا باید کار را شروع کنید!', 'warning'); } }
-        function workSubmit() { const formContainer = DOM.formModalBody; const employer = formContainer.querySelector('#workEmployer').value.trim(); const type = formContainer.querySelector('#workType').value.trim(); const count = parseInt(formContainer.querySelector('#workCount').value); const price = parseInt(formContainer.querySelector('#workPrice').value); const dateStartedStr = formContainer.querySelector('#workDateStarted').value.trim(); const dateFinishedStr = formContainer.querySelector('#workDateFinished')?.value.trim(); let dateStarted = null, dateFinished = null; if (dateStartedStr) { if (isValidJalaliDate(dateStartedStr)) { dateStarted = jalaliToGregorian(dateStartedStr).toISOString(); } else { return showNotification('فرمت تاریخ شروع نامعتبر است.', 'error'); } } if (dateFinishedStr) { if (isValidJalaliDate(dateFinishedStr)) { const finishMoment = parseFlexibleJalali(dateFinishedStr); if (dateStarted && finishMoment.isBefore(moment(dateStarted))) { return showNotification('تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد.', 'error'); } dateFinished = finishMoment.toDate().toISOString(); } else { return showNotification('فرمت تاریخ پایان نامعتبر است.', 'error'); } } if (!employer || !type || isNaN(count) || count < 1 || isNaN(price) || price < 0) { return showNotification('لطفاً همه مقادیر را به درستی وارد کنید', 'error'); } if (state.editingItemId) { const workIndex = state.works.findIndex(w => w.id === state.editingItemId); if (workIndex > -1) { const oldEmployer = state.works[workIndex].employer; const newTotal = count * price; state.works[workIndex] = { ...state.works[workIndex], employer, type, count, price, total: newTotal, dateStarted, dateFinished }; if (state.works[workIndex].paidAmount > newTotal) { const excess = state.works[workIndex].paidAmount - newTotal; state.works[workIndex].paidAmount = newTotal; addOrUpdateCredit(employer, excess, 'اعتبار (ناشی از ویرایش کار)'); } if (oldEmployer !== employer) { recalculateEmployerBalance(oldEmployer); recalculateEmployerBalance(employer); } showNotification('کار با موفقیت به‌روزرسانی شد', 'success'); } } else { state.works.unshift({ id: Date.now(), employer, type, count, price, total: count * price, paidAmount: 0, dateAdded: new Date().toISOString(), dateStarted: dateStarted, dateFinished: null }); showNotification('کار با موفقیت اضافه شد', 'success'); applyCreditForEmployer(employer); } state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; updateAll(); }
-        function editWork(id) { state.editingItemId = null; const work = state.works.find(w => w.id === id); if (!work || work.isCredit) return showNotification("امکان ویرایش اعتبار وجود ندارد.", 'error'); state.editingItemId = id; state.editingItemType = ITEM_TYPES.WORK; showFormInModal('ویرایش کار', 'work-form-template', (formEl) => { updateEmployerDatalist(formEl); formEl.querySelector('#workEmployer').value = work.employer; formEl.querySelector('#workType').value = work.type; formEl.querySelector('#workCount').value = work.count; formEl.querySelector('#workPrice').value = work.price; formEl.querySelector('#workSubmitBtn').textContent = 'به‌روزرسانی کار'; const startDateInput = formEl.querySelector('#workDateStarted'); if (work.dateStarted) startDateInput.value = toJalali(work.dateStarted); formEl.querySelector('#setStartDateBtn').addEventListener('click', () => { startDateInput.value = getCurrentJalaliDate(); }); const finishDateGroup = formEl.querySelector('#finishDateGroup'); if (work.dateStarted) { finishDateGroup.style.display = 'block'; const finishDateInput = formEl.querySelector('#workDateFinished'); if (work.dateFinished) finishDateInput.value = toJalali(work.dateFinished); formEl.querySelector('#setFinishDateBtn').addEventListener('click', () => { finishDateInput.value = getCurrentJalaliDate(); }); } const submitBtn = formEl.querySelector('#workSubmitBtn'); submitBtn.addEventListener('click', workSubmit); const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'لغو'; cancelBtn.className = 'btn btn-secondary'; cancelBtn.addEventListener('click', () => { state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; }); submitBtn.parentElement.appendChild(cancelBtn); }); }
+        
+        function clearFormErrors(formEl) {
+            formEl.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+        }
+
+        function startWork(workId) { const work = state.works.find(w => w.id === workId); if (work && !work.dateStarted) { work.dateStarted = new Date().toISOString(); showNotification(`کار "${work.type}" شروع شد.`, 'success'); updateAll(); } }
+        function finishWork(workId) { const work = state.works.find(w => w.id === workId); if (work && work.dateStarted && !work.dateFinished) { work.dateFinished = new Date().toISOString(); showNotification(`کار "${work.type}" به پایان رسید.`, 'success'); updateAll(); } else if (work && !work.dateStarted) { showNotification('ابتدا باید کار را شروع کنید!', 'warning'); } }
+        
+        function workSubmit() {
+            const formContainer = DOM.formModalBody;
+            clearFormErrors(formContainer); 
+
+            const employerInput = formContainer.querySelector('#workEmployer');
+            const typeInput = formContainer.querySelector('#workType');
+            const countInput = formContainer.querySelector('#workCount');
+            const priceInput = formContainer.querySelector('#workPrice');
+
+            const employer = employerInput.value.trim();
+            const type = typeInput.value.trim();
+            const count = parseInt(countInput.value.replace(/,/g, ''));
+            const price = parseInt(priceInput.value.replace(/,/g, ''));
+
+            const dateStartedStr = formContainer.querySelector('#workDateStarted').value.trim();
+            const dateFinishedInput = formContainer.querySelector('#workDateFinished');
+            const dateFinishedStr = dateFinishedInput ? dateFinishedInput.value.trim() : null;
+            let dateStarted = null, dateFinished = null;
+            
+            if (!employer) { employerInput.classList.add('has-error'); return showNotification('لطفاً نام کارفرما را وارد کنید', 'error'); }
+            if (!type) { typeInput.classList.add('has-error'); return showNotification('لطفاً نوع کار را وارد کنید', 'error'); }
+            if (isNaN(count) || count < 1) { countInput.classList.add('has-error'); return showNotification('تعداد کار نامعتبر است', 'error'); }
+            if (isNaN(price) || price < 0) { priceInput.classList.add('has-error'); return showNotification('قیمت کار نامعتبر است', 'error'); }
+
+            if (dateStartedStr) { if (isValidJalaliDate(dateStartedStr)) { dateStarted = jalaliToGregorian(dateStartedStr).toISOString(); } else { formContainer.querySelector('#workDateStarted').classList.add('has-error'); return showNotification('فرمت تاریخ شروع نامعتبر است.', 'error'); } }
+            
+            if (dateFinishedStr) { 
+                if (isValidJalaliDate(dateFinishedStr)) { 
+                    const finishMoment = parseFlexibleJalali(dateFinishedStr); 
+                    if (dateStarted && finishMoment.isBefore(moment(dateStarted))) { 
+                        dateFinishedInput.classList.add('has-error'); 
+                        return showNotification('تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد.', 'error'); 
+                    } 
+                    dateFinished = finishMoment.toDate().toISOString(); 
+                } else { 
+                    if(dateFinishedInput) dateFinishedInput.classList.add('has-error'); 
+                    return showNotification('فرمت تاریخ پایان نامعتبر است.', 'error'); 
+                } 
+            }
+
+            if (state.editingItemId) {
+                const workIndex = state.works.findIndex(w => w.id === state.editingItemId);
+                if (workIndex > -1) {
+                    const oldEmployer = state.works[workIndex].employer;
+                    const newTotal = count * price;
+                    state.works[workIndex] = { ...state.works[workIndex], employer, type, count, price, total: newTotal, dateStarted, dateFinished };
+                    if (state.works[workIndex].paidAmount > newTotal) {
+                        const excess = state.works[workIndex].paidAmount - newTotal;
+                        state.works[workIndex].paidAmount = newTotal;
+                        addOrUpdateCredit(employer, excess, 'اعتبار (ناشی از ویرایش کار)');
+                    }
+                    if (oldEmployer !== employer) { recalculateEmployerBalance(oldEmployer); recalculateEmployerBalance(employer); }
+                    showNotification('کار با موفقیت به‌روزرسانی شد', 'success');
+                }
+            } else {
+                state.works.unshift({ id: generateUniqueId(), employer, type, count, price, total: count * price, paidAmount: 0, dateAdded: new Date().toISOString(), dateStarted: dateStarted, dateFinished: null });
+                showNotification('کار با موفقیت اضافه شد', 'success');
+                applyCreditForEmployer(employer);
+            }
+            state.editingItemId = null;
+            state.editingItemType = null;
+            DOM.formModal.style.display = 'none';
+            document.body.style.overflow = '';
+            updateAll();
+        }
+
+        function editWork(id) { state.editingItemId = null; const work = state.works.find(w => w.id === id); if (!work || work.isCredit) return showNotification("امکان ویرایش اعتبار وجود ندارد.", 'error'); state.editingItemId = id; state.editingItemType = ITEM_TYPES.WORK; showFormInModal('ویرایش کار', 'work-form-template', (formEl) => { updateEmployerDatalist(formEl); formEl.querySelector('#workEmployer').value = work.employer; formEl.querySelector('#workType').value = work.type; formEl.querySelector('#workCount').value = work.count; formEl.querySelector('#workPrice').value = work.price; formEl.querySelector('#workSubmitBtn').textContent = 'به‌روزرسانی کار'; const startDateInput = formEl.querySelector('#workDateStarted'); if (work.dateStarted) startDateInput.value = toJalali(work.dateStarted); formEl.querySelector('#setStartDateBtn').addEventListener('click', () => { startDateInput.value = getCurrentJalaliDate(); }); const finishDateGroup = formEl.querySelector('#finishDateGroup'); finishDateGroup.style.display = 'block'; const finishDateInput = formEl.querySelector('#workDateFinished'); if (work.dateFinished) finishDateInput.value = toJalali(work.dateFinished); formEl.querySelector('#setFinishDateBtn').addEventListener('click', () => { finishDateInput.value = getCurrentJalaliDate(); }); const submitBtn = formEl.querySelector('#workSubmitBtn'); submitBtn.addEventListener('click', workSubmit); const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'لغو'; cancelBtn.className = 'btn btn-secondary'; cancelBtn.addEventListener('click', () => { state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; document.body.style.overflow = ''; }); submitBtn.parentElement.appendChild(cancelBtn); }); }
         function updateWorksList() { DOM.worksList.innerHTML = ''; const searchTerm = DOM.workSearchInput.value.toLowerCase(); const selectedEmployer = DOM.workEmployerFilter.value; const filteredWorks = state.works.filter(w => w.type.toLowerCase().includes(searchTerm) || w.employer.toLowerCase().includes(searchTerm)).filter(w => selectedEmployer === 'all' || w.employer === selectedEmployer); const { currentPage, itemsPerPage } = state.pagination.works; const totalItems = filteredWorks.length; const startIndex = (currentPage - 1) * itemsPerPage; const paginatedWorks = filteredWorks.slice(startIndex, startIndex + itemsPerPage); const sortedWorks = [...paginatedWorks].sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)); if (sortedWorks.length === 0 && totalItems === 0) { DOM.worksList.innerHTML = emptyStateWorksEl; } else { sortedWorks.forEach(work => { const workItem = document.createElement('div'); workItem.className = 'item'; if (work.isCredit) { workItem.innerHTML = `<div class="item-details" style="width: 100%;"><div style="display: flex; justify-content: space-between; align-items: center;"><div><div class="item-name" style="color: var(--success-color);"><i class="fas fa-wallet"></i><span>${work.type}</span></div><div class="item-meta"><span><i class="fas fa-user-tie"></i>${work.employer}</span></div></div><div style="text-align: left;"><div class="payment-amount" style="margin-bottom: 8px;">${formatNumber(Math.abs(work.total))} تومان</div><div class="item-actions"><button class="action-btn delete-btn" title="حذف اعتبار"><i class="fas fa-trash-alt"></i></button></div></div></div></div>`; workItem.querySelector('.delete-btn').addEventListener('click', () => removeItem(work.id, ITEM_TYPES.WORK)); } else { const remainingAmount = work.total - (work.paidAmount || 0); const itemDetails = document.createElement('div'); itemDetails.className = 'item-details'; itemDetails.style.width = '100%'; let dateInfoHTML = ''; let workTimeActionButton = null; if (!work.dateStarted) { dateInfoHTML = `<span><i class="far fa-clock"></i> هنوز شروع نشده</span>`; workTimeActionButton = document.createElement('button'); workTimeActionButton.className = 'action-btn'; workTimeActionButton.title = 'شروع کار'; workTimeActionButton.innerHTML = `<i class="fas fa-play"></i>`; workTimeActionButton.addEventListener('click', () => startWork(work.id)); } else if (work.dateStarted && !work.dateFinished) { dateInfoHTML = `<span><i class="fas fa-hourglass-start"></i> شروع: ${toJalali(work.dateStarted)}</span>`; workTimeActionButton = document.createElement('button'); workTimeActionButton.className = 'action-btn'; workTimeActionButton.title = 'پایان کار'; workTimeActionButton.style.backgroundColor = 'var(--success-color)'; workTimeActionButton.style.color = 'white'; workTimeActionButton.innerHTML = `<i class="fas fa-check"></i>`; workTimeActionButton.addEventListener('click', () => finishWork(work.id)); } else { const duration = moment(work.dateFinished).diff(moment(work.dateStarted), 'days'); dateInfoHTML = `<span><i class="fas fa-play-circle" style="color:var(--info-color);"></i> شروع: ${toJalali(work.dateStarted)}</span><span><i class="fas fa-check-circle" style="color:var(--success-color);"></i> پایان: ${toJalali(work.dateFinished)}</span><span style="font-weight: 500;"><i class="fas fa-hourglass-half"></i> مدت: ${duration >= 0 ? duration + 1 : 1} روز</span>`; } itemDetails.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start;"><div><div class="item-name">${getWorkStatusBadge(work)}<span>${work.type}</span></div><div class="item-meta"><span><i class="fas fa-user-tie"></i>${work.employer}</span>${dateInfoHTML}</div></div><div class="item-actions"></div></div><div class="item-meta" style="justify-content: space-between; margin-top: 12px; width: 100%;"><span style="color: ${remainingAmount > 0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: 500;">${remainingAmount > 0 ? `مانده: ${formatNumber(remainingAmount)} ت` : 'تسویه شده'}</span><span style="font-weight: 500;">کل: ${formatNumber(work.total)} ت</span></div><div class="progress-bar-container"><div class="progress-bar" style="width: ${work.total > 0 ? ((work.paidAmount || 0) / work.total) * 100 : 0}%;"></div></div>`; const actionsContainer = itemDetails.querySelector('.item-actions'); if (workTimeActionButton) actionsContainer.appendChild(workTimeActionButton); const editBtn = document.createElement('button'); editBtn.className = 'action-btn edit-btn'; editBtn.title = 'ویرایش'; editBtn.innerHTML = `<i class="fas fa-edit"></i>`; editBtn.addEventListener('click', () => editWork(work.id)); const deleteBtn = document.createElement('button'); deleteBtn.className = 'action-btn delete-btn'; deleteBtn.title = 'حذف'; deleteBtn.innerHTML = `<i class="fas fa-trash-alt"></i>`; deleteBtn.addEventListener('click', () => removeItem(work.id, ITEM_TYPES.WORK)); const archiveBtn = document.createElement('button'); archiveBtn.className = 'action-btn archive-btn'; archiveBtn.title = 'بایگانی دستی'; archiveBtn.innerHTML = `<i class="fas fa-archive"></i>`; archiveBtn.addEventListener('click', () => archiveItem(work.id, ITEM_TYPES.WORK)); actionsContainer.appendChild(editBtn); actionsContainer.appendChild(deleteBtn); actionsContainer.appendChild(archiveBtn); workItem.appendChild(itemDetails); } DOM.worksList.appendChild(workItem); }); } renderPaginationControls(DOM.worksPagination, totalItems, currentPage, itemsPerPage, (newPage) => { state.pagination.works.currentPage = newPage; updateWorksList(); }); adjustCollapsibleHeight(DOM.worksList); }
         function getWorkStatusBadge(work) { if (work.paidAmount <= 0) return '<span class="status-badge unpaid">تسویه نشده</span>'; if (work.paidAmount < work.total) return '<span class="status-badge partial">تسویه ناقص</span>'; return ''; }
         function updateEmployerDatalist(formEl = document) { const dataList = formEl.querySelector('#employer-list'); if (!dataList) return; const employers = [...new Set(state.works.map(w => w.employer))]; dataList.innerHTML = employers.map(e => `<option value="${e}"></option>`).join(''); }
         function populateWorkEmployerFilter() { const employers = [...new Set(state.works.map(w => w.employer))].sort(); DOM.workEmployerFilter.innerHTML = `<option value="all">همه کارفرمایان</option>`; employers.forEach(emp => { const option = document.createElement('option'); option.value = emp; option.textContent = emp; DOM.workEmployerFilter.appendChild(option); }); }
-        function paymentSubmit() { const formContainer = DOM.formModalBody; const employer = formContainer.querySelector('#paymentEmployer').value, amount = parseInt(formContainer.querySelector('#paymentAmount').value), dateStr = formContainer.querySelector('#paymentDate').value, description = formContainer.querySelector('#paymentDescription').value.trim(); if (!employer) return showNotification('لطفاً کارفرمای پرداخت کننده را انتخاب کنید.', 'error'); if (isNaN(amount) || amount <= 0 || !isValidJalaliDate(dateStr)) return showNotification('لطفاً مبلغ معتبر و تاریخ شمسی با فرمت صحیح وارد کنید.', 'error'); const date = jalaliToGregorian(dateStr).toISOString(); const jalaliDate = toJalali(date); if (state.editingItemId) { const pIndex = state.payments.findIndex(p => p.id === state.editingItemId); if (pIndex > -1) { const originalPayment = { ...state.payments[pIndex] }; state.payments[pIndex] = { ...originalPayment, employer, amount, date, description, jalaliDate }; recalculateEmployerBalance(originalPayment.employer); if (originalPayment.employer !== employer) recalculateEmployerBalance(employer); showNotification('دریافتی با موفقیت به‌روزرسانی شد.', 'success'); } } else { state.payments.unshift({ id: Date.now(), employer, amount, date, description, jalaliDate }); showNotification('دریافتی با موفقیت ثبت شد', 'success'); allocatePayment(employer, amount); } state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; updateAll(); }
-        function editPayment(id) { const payment = state.payments.find(p => p.id === id); if (!payment) return; state.editingItemId = id; state.editingItemType = ITEM_TYPES.PAYMENT; showFormInModal('ویرایش دریافتی', 'payment-form-template', (formEl) => { const employerSelect = formEl.querySelector('#paymentEmployer'); populateEmployerDropdown(employerSelect); employerSelect.value = payment.employer; formEl.querySelector('#paymentAmount').value = payment.amount; formEl.querySelector('#paymentDate').value = payment.jalaliDate || getCurrentJalaliDate(); formEl.querySelector('#paymentDescription').value = payment.description; const submitBtn = formEl.querySelector('#paymentSubmitBtn'); submitBtn.textContent = 'به‌روزرسانی دریافتی'; submitBtn.className = 'btn btn-update'; submitBtn.addEventListener('click', () => paymentSubmit(id, formEl)); const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'لغو'; cancelBtn.className = 'btn btn-secondary'; cancelBtn.addEventListener('click', () => { state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; }); submitBtn.parentElement.appendChild(cancelBtn); }); }
+
+        function paymentSubmit() {
+            const formContainer = DOM.formModalBody;
+            clearFormErrors(formContainer);
+
+            const employerSelect = formContainer.querySelector('#paymentEmployer');
+            const amountInput = formContainer.querySelector('#paymentAmount');
+            const dateInput = formContainer.querySelector('#paymentDate');
+
+            const employer = employerSelect.value;
+            const amount = parseInt(amountInput.value.replace(/,/g, ''));
+            const dateStr = dateInput.value;
+            const description = formContainer.querySelector('#paymentDescription').value.trim();
+
+            if (!employer) { employerSelect.classList.add('has-error'); return showNotification('لطفاً کارفرمای پرداخت کننده را انتخاب کنید.', 'error'); }
+            if (isNaN(amount) || amount <= 0) { amountInput.classList.add('has-error'); return showNotification('لطفاً مبلغ معتبر وارد کنید.', 'error'); }
+            if (!isValidJalaliDate(dateStr)) { dateInput.classList.add('has-error'); return showNotification('لطفاً تاریخ شمسی با فرمت صحیح وارد کنید.', 'error'); }
+            
+            const date = jalaliToGregorian(dateStr).toISOString();
+            const jalaliDate = toJalali(date);
+
+            if (state.editingItemId) {
+                const pIndex = state.payments.findIndex(p => p.id === state.editingItemId);
+                if (pIndex > -1) {
+                    const originalPayment = { ...state.payments[pIndex] };
+                    state.payments[pIndex] = { ...originalPayment, employer, amount, date, description, jalaliDate };
+                    recalculateEmployerBalance(originalPayment.employer);
+                    if (originalPayment.employer !== employer) recalculateEmployerBalance(employer);
+                    showNotification('دریافتی با موفقیت به‌روزرسانی شد.', 'success');
+                }
+            } else {
+                state.payments.unshift({ id: generateUniqueId(), employer, amount, date, description, jalaliDate });
+                showNotification('دریافتی با موفقیت ثبت شد', 'success');
+                allocatePayment(employer, amount);
+            }
+            state.editingItemId = null;
+            state.editingItemType = null;
+            DOM.formModal.style.display = 'none';
+            document.body.style.overflow = '';
+            updateAll();
+        }
+
+        function editPayment(id) { const payment = state.payments.find(p => p.id === id); if (!payment) return; state.editingItemId = id; state.editingItemType = ITEM_TYPES.PAYMENT; showFormInModal('ویرایش دریافتی', 'payment-form-template', (formEl) => { const employerSelect = formEl.querySelector('#paymentEmployer'); populateEmployerDropdown(employerSelect); employerSelect.value = payment.employer; formEl.querySelector('#paymentAmount').value = payment.amount; formEl.querySelector('#paymentDate').value = payment.jalaliDate || getCurrentJalaliDate(); formEl.querySelector('#paymentDescription').value = payment.description; const submitBtn = formEl.querySelector('#paymentSubmitBtn'); submitBtn.textContent = 'به‌روزرسانی دریافتی'; submitBtn.className = 'btn btn-update'; submitBtn.addEventListener('click', () => paymentSubmit(id, formEl)); const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'لغو'; cancelBtn.className = 'btn btn-secondary'; cancelBtn.addEventListener('click', () => { state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; document.body.style.overflow = ''; }); submitBtn.parentElement.appendChild(cancelBtn); }); }
         function applyCreditForEmployer(employerName) { const creditWork = state.works.find(w => w.employer === employerName && w.isCredit); if (!creditWork || Math.abs(creditWork.total) <= 0) return; let creditAmount = Math.abs(creditWork.total); const unpaidWorks = state.works.filter(w => w.employer === employerName && !w.isCredit && w.paidAmount < w.total).sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded)); let creditApplied = false; for (const work of unpaidWorks) { if (creditAmount <= 0) break; const amountToApply = Math.min(creditAmount, work.total - work.paidAmount); work.paidAmount += amountToApply; creditWork.total += amountToApply; creditAmount -= amountToApply; creditApplied = true; } if (creditWork.total >= 0) state.works = state.works.filter(w => w.id !== creditWork.id); const settledWorkIds = new Set(unpaidWorks.filter(w => w.paidAmount >= w.total).map(w => w.id)); if (settledWorkIds.size > 0) { state.archive.push(...state.works.filter(w => settledWorkIds.has(w.id)).map(aw => ({ ...aw, itemType: "work", dateArchived: new Date().toISOString(), archiveType: "auto" }))); state.works = state.works.filter(w => !settledWorkIds.has(w.id)); } if (creditApplied) { showNotification(`اعتبار موجود برای "${employerName}" به کارها اعمال شد.`, 'success'); updateAll(); } }
         function allocatePayment(employerName, paymentAmount) { let remainingPayment = paymentAmount; const employerWorks = state.works.filter(w => w.employer === employerName && !w.isCredit).sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded)); const settledWorkIds = new Set(); for (const work of employerWorks) { if (remainingPayment <= 0) break; const originalWork = state.works.find(w => w.id === work.id); if (!originalWork || originalWork.total - originalWork.paidAmount <= 0) continue; const paymentForThisWork = Math.min(remainingPayment, originalWork.total - originalWork.paidAmount); originalWork.paidAmount += paymentForThisWork; remainingPayment -= paymentForThisWork; if (originalWork.paidAmount >= originalWork.total) settledWorkIds.add(originalWork.id); } if (settledWorkIds.size > 0) { state.archive.push(...state.works.filter(w => settledWorkIds.has(w.id)).map(aw => ({ ...aw, itemType: ITEM_TYPES.WORK, dateArchived: new Date().toISOString(), archiveType: "auto" }))); state.works = state.works.filter(w => !settledWorkIds.has(w.id)); showNotification(`${settledWorkIds.size} کار برای "${employerName}" تسویه و بایگانی شد.`, 'success'); } if (remainingPayment > 0) addOrUpdateCredit(employerName, remainingPayment, 'اعتبار / پیش‌پرداخت'); }
         function recalculateEmployerBalance(employerName) { let employerWorks = state.works.filter(w => w.employer === employerName); const archivedEmployerWorks = state.archive.filter(w => w.itemType === ITEM_TYPES.WORK && w.employer === employerName); const allEmployerWorks = [...employerWorks, ...archivedEmployerWorks]; allEmployerWorks.forEach(w => w.paidAmount = 0); state.works = state.works.filter(w => w.employer !== employerName).concat(allEmployerWorks); state.archive = state.archive.filter(w => !(w.itemType === ITEM_TYPES.WORK && w.employer === employerName)); const employerPayments = state.payments.filter(p => p.employer === employerName).sort((a, b) => new Date(a.date) - new Date(b.date)); employerPayments.forEach(p => { allocatePayment(employerName, p.amount); }); }
         function updatePaymentsList() { DOM.paymentsList.innerHTML = ''; const searchTerm = DOM.paymentSearchInput.value.toLowerCase(); const filteredPayments = state.payments.filter(p => (p.description || '').toLowerCase().includes(searchTerm) || (p.employer || '').toLowerCase().includes(searchTerm)); const sortedPayments = [...filteredPayments].sort((a, b) => new Date(b.date) - new Date(a.date)); if (sortedPayments.length === 0) DOM.paymentsList.innerHTML = emptyStatePaymentsEl; else sortedPayments.forEach(p => { const item = document.createElement('div'); item.className = 'item'; item.innerHTML = `<div class="item-details"><div class="item-name">${p.employer}</div><div class="item-meta"><span>${p.description || 'دریافتی'}</span><span>تاریخ: ${p.jalaliDate || toJalali(p.date)}</span></div></div><div style="text-align: left;"><div class="payment-amount" style="margin-bottom: 8px;">${formatNumber(p.amount)} تومان</div><div class="item-actions"><button class="action-btn edit-btn" title="ویرایش"><i class="fas fa-edit"></i></button><button class="action-btn archive-btn" title="بایگانی"><i class="fas fa-archive"></i></button><button class="action-btn delete-btn" title="حذف"><i class="fas fa-trash-alt"></i></button></div></div>`; item.querySelector('.edit-btn').addEventListener('click', () => editPayment(p.id)); item.querySelector('.archive-btn').addEventListener('click', () => archiveItem(p.id, ITEM_TYPES.PAYMENT)); item.querySelector('.delete-btn').addEventListener('click', () => removeItem(p.id, ITEM_TYPES.PAYMENT)); DOM.paymentsList.appendChild(item); }); adjustCollapsibleHeight(DOM.paymentsList); }
-        function expenseSubmit() { const formContainer = DOM.formModalBody; const title = formContainer.querySelector('#expenseTitle').value.trim(), category = formContainer.querySelector('#expenseCategory').value, amount = parseInt(formContainer.querySelector('#expenseAmount').value), dateStr = formContainer.querySelector('#expenseDate').value, description = formContainer.querySelector('#expenseDescription').value.trim(); if (!title || isNaN(amount) || amount <= 0 || !isValidJalaliDate(dateStr)) return showNotification('لطفاً عنوان، مبلغ معتبر و تاریخ شمسی با فرمت صحیح وارد کنید.', 'error'); const date = jalaliToGregorian(dateStr).toISOString(); const jalaliDate = toJalali(date); if (state.editingItemId) { const eIndex = state.expenses.findIndex(e => e.id === state.editingItemId); if (eIndex > -1) { state.expenses[eIndex] = { ...state.expenses[eIndex], title, category, amount, date, description, jalaliDate }; showNotification('هزینه با موفقیت به‌روزرسانی شد.', 'success'); } } else { state.expenses.unshift({ id: Date.now(), title, category, amount, date, description, jalaliDate }); showNotification('هزینه با موفقیت ثبت شد', 'success'); } state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; updateAll(); }
-        function editExpense(id) { const expense = state.expenses.find(e => e.id === id); if (!expense) return; state.editingItemId = id; state.editingItemType = ITEM_TYPES.EXPENSE; showFormInModal('ویرایش هزینه', 'expense-form-template', (formEl) => { const categorySelect = formEl.querySelector('#expenseCategory'); categorySelect.innerHTML = expenseCategories.map(c => `<option value="${c}">${c}</option>`).join(''); formEl.querySelector('#expenseTitle').value = expense.title; categorySelect.value = expense.category || 'عمومی'; formEl.querySelector('#expenseAmount').value = expense.amount; formEl.querySelector('#expenseDate').value = expense.jalaliDate || getCurrentJalaliDate(); formEl.querySelector('#expenseDescription').value = expense.description; const submitBtn = formEl.querySelector('#expenseSubmitBtn'); submitBtn.textContent = 'به‌روزرسانی هزینه'; submitBtn.className = 'btn btn-update'; submitBtn.addEventListener('click', () => expenseSubmit()); const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'لغو'; cancelBtn.className = 'btn btn-secondary'; cancelBtn.addEventListener('click', () => { state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; }); submitBtn.parentElement.appendChild(cancelBtn); }); }
+        
+        function expenseSubmit() {
+            const formContainer = DOM.formModalBody;
+            clearFormErrors(formContainer);
+
+            const titleInput = formContainer.querySelector('#expenseTitle');
+            const amountInput = formContainer.querySelector('#expenseAmount');
+            const dateInput = formContainer.querySelector('#expenseDate');
+            
+            const title = titleInput.value.trim();
+            const category = formContainer.querySelector('#expenseCategory').value;
+            const amount = parseInt(amountInput.value.replace(/,/g, ''));
+            const dateStr = dateInput.value;
+            const description = formContainer.querySelector('#expenseDescription').value.trim();
+
+            if (!title) { titleInput.classList.add('has-error'); return showNotification('لطفاً عنوان هزینه را وارد کنید.', 'error'); }
+            if (isNaN(amount) || amount <= 0) { amountInput.classList.add('has-error'); return showNotification('لطفاً مبلغ معتبر وارد کنید.', 'error'); }
+            if (!isValidJalaliDate(dateStr)) { dateInput.classList.add('has-error'); return showNotification('لطفاً تاریخ شمسی با فرمت صحیح وارد کنید.', 'error'); }
+
+            const date = jalaliToGregorian(dateStr).toISOString();
+            const jalaliDate = toJalali(date);
+
+            if (state.editingItemId) {
+                const eIndex = state.expenses.findIndex(e => e.id === state.editingItemId);
+                if (eIndex > -1) {
+                    state.expenses[eIndex] = { ...state.expenses[eIndex], title, category, amount, date, description, jalaliDate };
+                    showNotification('هزینه با موفقیت به‌روزرسانی شد.', 'success');
+                }
+            } else {
+                state.expenses.unshift({ id: generateUniqueId(), title, category, amount, date, description, jalaliDate });
+                showNotification('هزینه با موفقیت ثبت شد', 'success');
+            }
+            state.editingItemId = null;
+            state.editingItemType = null;
+            DOM.formModal.style.display = 'none';
+            document.body.style.overflow = '';
+            updateAll();
+        }
+
+        function editExpense(id) { const expense = state.expenses.find(e => e.id === id); if (!expense) return; state.editingItemId = id; state.editingItemType = ITEM_TYPES.EXPENSE; showFormInModal('ویرایش هزینه', 'expense-form-template', (formEl) => { const categorySelect = formEl.querySelector('#expenseCategory'); categorySelect.innerHTML = expenseCategories.map(c => `<option value="${c}">${c}</option>`).join(''); formEl.querySelector('#expenseTitle').value = expense.title; categorySelect.value = expense.category || 'عمومی'; formEl.querySelector('#expenseAmount').value = expense.amount; formEl.querySelector('#expenseDate').value = expense.jalaliDate || getCurrentJalaliDate(); formEl.querySelector('#expenseDescription').value = expense.description; const submitBtn = formEl.querySelector('#expenseSubmitBtn'); submitBtn.textContent = 'به‌روزرسانی هزینه'; submitBtn.className = 'btn btn-update'; submitBtn.addEventListener('click', () => expenseSubmit()); const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'لغو'; cancelBtn.className = 'btn btn-secondary'; cancelBtn.addEventListener('click', () => { state.editingItemId = null; state.editingItemType = null; DOM.formModal.style.display = 'none'; document.body.style.overflow = ''; }); submitBtn.parentElement.appendChild(cancelBtn); }); }
         function updateExpensesList() { DOM.expensesList.innerHTML = ''; const searchTerm = DOM.expenseSearchInput.value.toLowerCase(); const filteredExpenses = state.expenses.filter(e => e.title.toLowerCase().includes(searchTerm) || (e.description || '').toLowerCase().includes(searchTerm)); const sortedExpenses = [...filteredExpenses].sort((a, b) => new Date(b.date) - new Date(a.date)); if (sortedExpenses.length === 0) DOM.expensesList.innerHTML = emptyStateExpensesEl; else sortedExpenses.forEach(e => { const item = document.createElement('div'); item.className = 'item'; item.innerHTML = `<div class="item-details"><div class="item-name"><span class="category-badge">${e.category || 'عمومی'}</span>${e.title}</div><div class="item-meta"><span>${e.description || ''}</span><span>تاریخ: ${e.jalaliDate || toJalali(e.date)}</span></div></div><div style="text-align: left;"><div class="expense-amount" style="margin-bottom: 8px;">${formatNumber(e.amount)} تومان</div><div class="item-actions"><button class="action-btn edit-btn" title="ویرایش"><i class="fas fa-edit"></i></button><button class="action-btn delete-btn" title="حذف"><i class="fas fa-trash-alt"></i></button></div></div>`; item.querySelector('.edit-btn').addEventListener('click', () => editExpense(e.id)); item.querySelector('.delete-btn').addEventListener('click', () => removeItem(e.id, ITEM_TYPES.EXPENSE)); DOM.expensesList.appendChild(item); }); adjustCollapsibleHeight(DOM.expensesList); }
-        function finalizeDelete() { if (!lastDeleted.item) return; if (lastDeleted.type === ITEM_TYPES.WORK && lastDeleted.item.paidAmount > 0) { addOrUpdateCredit(lastDeleted.item.employer, lastDeleted.item.paidAmount, 'اعتبار (ناشی از حذف کار)'); } if (lastDeleted.type === ITEM_TYPES.PAYMENT) { recalculateEmployerBalance(lastDeleted.item.employer); } console.log(`${lastDeleted.type} with id ${lastDeleted.item.id} permanently deleted.`); lastDeleted = { item: null, type: null, sourceArray: null, index: -1 }; updateAll(); saveToLocalStorage(); }
-        function performUndo() { if (!lastDeleted.item) return; lastDeleted.sourceArray.splice(lastDeleted.index, 0, lastDeleted.item); clearTimeout(undoTimeout); DOM.notification.style.display = 'none'; showNotification('عملیات با موفقیت لغو شد.', 'success'); lastDeleted = { item: null, type: null, sourceArray: null, index: -1 }; updateAll(); saveToLocalStorage(); }
+        
+        function updateExpenseChart() {
+            if(!DOM.expenseCategoryChart) return;
+            
+            const categoryTotals = state.expenses.reduce((acc, expense) => {
+                const category = expense.category || 'متفرقه';
+                acc[category] = (acc[category] || 0) + expense.amount;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(categoryTotals);
+            const data = Object.values(categoryTotals);
+
+            if (expenseChart) expenseChart.destroy();
+            
+            if(data.length === 0) {
+                // Show empty state inside the chart container if you want
+                return;
+            }
+
+            const computedStyle = getComputedStyle(DOM.body);
+            const textColor = computedStyle.getPropertyValue('--text-primary');
+            const chartColors = ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#6B7281', '#F472B6'];
+
+            expenseChart = new Chart(DOM.expenseCategoryChart, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'هزینه‌ها بر اساس دسته‌بندی',
+                        data: data,
+                        backgroundColor: chartColors,
+                        borderColor: computedStyle.getPropertyValue('--card-bg-color'),
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                font: {
+                                    family: 'Vazirmatn, sans-serif'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function finalizeDelete() { if (!lastDeleted.item) return; if (lastDeleted.type === ITEM_TYPES.WORK && lastDeleted.item.paidAmount > 0) { addOrUpdateCredit(lastDeleted.item.employer, lastDeleted.item.paidAmount, 'اعتبار (ناشی از حذف کار)'); } if (lastDeleted.type === ITEM_TYPES.PAYMENT) { recalculateEmployerBalance(lastDeleted.item.employer); } console.log(`${lastDeleted.type} with id ${lastDeleted.item.id} permanently deleted.`); lastDeleted = { item: null, type: null, sourceArray: null, index: -1 }; updateAll(); }
+        function performUndo() { if (!lastDeleted.item) return; lastDeleted.sourceArray.splice(lastDeleted.index, 0, lastDeleted.item); clearTimeout(undoTimeout); DOM.notification.style.display = 'none'; showNotification('عملیات با موفقیت لغو شد.', 'success'); lastDeleted = { item: null, type: null, sourceArray: null, index: -1 }; updateAll(); }
         function removeItem(id, type) { let itemTypeName = ''; const sourceArray = state[type + 's']; const itemIndex = sourceArray.findIndex(item => item.id === id); if (itemIndex < 0) return; switch (type) { case ITEM_TYPES.WORK: itemTypeName = 'کار'; break; case ITEM_TYPES.PAYMENT: itemTypeName = 'دریافتی'; break; case ITEM_TYPES.EXPENSE: itemTypeName = 'هزینه'; break; } showConfirmModal(`تایید حذف ${itemTypeName}`, `آیا از حذف این ${itemTypeName} مطمئن هستید؟ شما چند ثانیه برای لغو فرصت خواهید داشت.`, () => { if (lastDeleted.item) { clearTimeout(undoTimeout); finalizeDelete(); } const [item] = sourceArray.splice(itemIndex, 1); lastDeleted = { item, type, sourceArray, index: itemIndex }; updateAll(); showNotification(`${itemTypeName} حذف شد.`, 'error', { text: 'لغو', onClick: performUndo }); }); }
         function archiveItem(id, type) { showConfirmModal(`بایگانی ${type === ITEM_TYPES.WORK ? 'کار' : 'دریافتی'}`, `آیا می‌خواهید این مورد از لیست فعال خارج و بایگانی شود؟`, () => { const sourceArray = state[type + 's']; const itemIndex = sourceArray.findIndex(item => item.id === id); if (itemIndex > -1) { const item = sourceArray.splice(itemIndex, 1)[0]; item.itemType = type; item.dateArchived = new Date().toISOString(); item.archiveType = "manual"; state.archive.push(item); if (type === ITEM_TYPES.PAYMENT) recalculateEmployerBalance(item.employer); showNotification('مورد با موفقیت بایگانی شد', 'success'); updateAll(); } }); }
         function restoreItem(id) { const itemIndex = state.archive.findIndex(item => item.id === id); if (itemIndex < 0) return; const item = state.archive.splice(itemIndex, 1)[0]; const type = item.itemType; state[type + 's'].push(item); if (type === ITEM_TYPES.PAYMENT) recalculateEmployerBalance(item.employer); if (type === ITEM_TYPES.WORK) applyCreditForEmployer(item.employer); showNotification('مورد با موفقیت بازیابی شد', 'success'); updateAll(); }
         function deletePermanent(id) { showConfirmModal('حذف دائمی', 'آیا مطمئن هستید که می‌خواهید این مورد را برای همیشه حذف کنید؟ این عمل قابل بازگشت نیست.', () => { const itemIndex = state.archive.findIndex(item => item.id === id); if(itemIndex > -1) { const item = state.archive[itemIndex]; if (item.itemType === ITEM_TYPES.PAYMENT) recalculateEmployerBalance(item.employer); } state.archive = state.archive.filter(item => item.id !== id); showNotification('مورد برای همیشه حذف شد', 'success'); updateAll(); }); }
-        function updateMonthlyChart() { if(!DOM.monthlyChart) return; const monthlyData = {}; [...state.payments, ...state.archive.filter(i => i.itemType === ITEM_TYPES.PAYMENT)].flat().forEach(p => { const date = new Date(p.date); const key = `${moment(date).jYear()}-${moment(date).jMonth()}`; monthlyData[key] = { year: moment(date).jYear(), month: moment(date).jMonth(), amount: (monthlyData[key]?.amount || 0) + p.amount }; }); const data = Object.values(monthlyData).sort((a,b) => a.year - b.year || a.month - b.month); if (myChart) myChart.destroy(); const computedStyle = getComputedStyle(DOM.body); const gridColor = computedStyle.getPropertyValue('--border-color'); const textColor = computedStyle.getPropertyValue('--text-primary'); myChart = new Chart(DOM.monthlyChart, { type: 'bar', data: { labels: data.map(d => `${monthNames[d.month]} ${d.year}`), datasets: [{ label: 'درآمد ماهانه (تومان)', data: data.map(d => d.amount), backgroundColor: 'rgba(16, 185, 129, 0.7)', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } }, plugins: { legend: { labels: { font: { family: 'Vazirmatn, sans-serif' }, color: textColor } } } } }); }
+        function updateMonthlyChart() { if(!DOM.monthlyChart) return; const monthlyData = {}; [...state.payments, ...state.archive.filter(i => i.itemType === ITEM_TYPES.PAYMENT)].flat().forEach(p => { const date = new Date(p.date); const key = `${moment(date).jYear()}-${moment(date).jMonth()}`; monthlyData[key] = { year: moment(date).jYear(), month: moment(date).jMonth(), amount: (monthlyData[key]?.amount || 0) + p.amount }; }); const data = Object.values(monthlyData).sort((a,b) => a.year - b.year || a.month - b.month); if (myChart) myChart.destroy(); const computedStyle = getComputedStyle(DOM.body); const gridColor = computedStyle.getPropertyValue('--border-color'); const textColor = computedStyle.getPropertyValue('--text-primary'); myChart = new Chart(DOM.monthlyChart, { type: 'bar', data: { labels: data.map(d => `${monthNames[d.month]} ${d.year}`), datasets: [{ label: 'درآمد ماهانه (تومان)', data: data.map(d => d.amount), backgroundColor: computedStyle.getPropertyValue('--success-color'), borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } }, plugins: { legend: { labels: { font: { family: 'Vazirmatn, sans-serif' }, color: textColor } } } } }); }
         function generateCustomReport() { const startDateStr = DOM.reportStartDateInput.value; const endDateStr = DOM.reportEndDateInput.value; if (!isValidJalaliDate(startDateStr) || !isValidJalaliDate(endDateStr)) return showNotification('لطفاً تاریخ شروع و پایان را با فرمت صحیح وارد کنید.', 'error'); const startDate = jalaliToGregorian(startDateStr).setHours(0,0,0,0); const endDate = jalaliToGregorian(endDateStr).setHours(23,59,59,999); const worksInRange = state.works.filter(w => !w.isCredit && new Date(w.dateAdded) >= startDate && new Date(w.dateAdded) <= endDate); const paymentsInRange = state.payments.filter(p => new Date(p.date) >= startDate && new Date(p.date) <= endDate); const expensesInRange = state.expenses.filter(e => new Date(e.date) >= startDate && new Date(e.date) <= endDate); const totalWorkValue = worksInRange.reduce((s, w) => s + w.total, 0); const totalPaymentValue = paymentsInRange.reduce((s, p) => s + p.amount, 0); const totalExpenseValue = expensesInRange.reduce((s, e) => s + e.amount, 0); const balance = totalPaymentValue - totalExpenseValue; let reportHTML = `<div class="summary-row"><span>جمع کارها:</span> <span>${formatNumber(totalWorkValue)} تومان</span></div><div class="summary-row"><span>جمع دریافتی‌ها:</span> <span>${formatNumber(totalPaymentValue)} تومان</span></div><div class="summary-row"><span>جمع هزینه‌ها:</span> <span>${formatNumber(totalExpenseValue)} تومان</span></div><div class="summary-row"><span class="summary-label">سود/زیان خالص:</span> <span class="summary-balance ${balance >= 0 ? 'positive' : 'negative'}">${formatNumber(Math.abs(balance))} تومان</span></div><h4>کارهای ثبت‌شده (${worksInRange.length})</h4>`; reportHTML += worksInRange.length > 0 ? worksInRange.map(w => `<div class="item-sm"><strong>${w.employer} - ${w.type}</strong> - ${formatNumber(w.total)} تومان</div>`).join('') : '<p>کاری در این بازه زمانی ثبت نشده است.</p>'; reportHTML += `<h4>دریافتی‌ها (${paymentsInRange.length})</h4>`; reportHTML += paymentsInRange.length > 0 ? paymentsInRange.map(p => `<div class="item-sm"><strong>${p.employer} (${p.description || 'دریافتی'})</strong> (${toJalali(p.date)}) - ${formatNumber(p.amount)} تومان</div>`).join('') : '<p>دریافتی در این بازه زمانی ثبت نشده است.</p>'; reportHTML += `<h4>هزینه‌ها (${expensesInRange.length})</h4>`; reportHTML += expensesInRange.length > 0 ? expensesInRange.map(e => `<div class="item-sm"><strong>${e.title} (${e.category})</strong> (${toJalali(e.date)}) - ${formatNumber(e.amount)} تومان</div>`).join('') : '<p>هزینه‌ای در این بازه زمانی ثبت نشده است.</p>'; document.getElementById('report-modal-title').textContent = `گزارش از ${startDateStr} تا ${endDateStr}`; DOM.reportModalBody.innerHTML = reportHTML; DOM.reportModal.style.display = 'flex'; }
         function updateArchiveLists() { DOM.archivedWorksList.innerHTML = ''; const archivedWorks = state.archive.filter(item => item.itemType === ITEM_TYPES.WORK); if (archivedWorks.length === 0) { DOM.archivedWorksList.innerHTML = emptyStateArchivedWorksEl; } else { archivedWorks.sort((a, b) => new Date(b.dateArchived) - new Date(a.dateArchived)).forEach(item => { const itemEl = document.createElement('div'); itemEl.className = 'item'; itemEl.innerHTML = `<div class="item-details"><div class="item-name">${item.employer} - ${item.type}</div><div class="item-meta"><span>تاریخ بایگانی: ${toJalali(item.dateArchived)}</span></div></div><div style="text-align: left;"><div class="item-total" style="margin-bottom: 8px;">${formatNumber(item.total)} تومان</div><div class="item-actions"><button class="action-btn restore-btn" title="بازیابی"><i class="fas fa-undo"></i></button><button class="action-btn delete-btn" title="حذف دائمی"><i class="fas fa-trash-alt"></i></button></div></div>`; itemEl.querySelector('.restore-btn').addEventListener('click', () => restoreItem(item.id)); itemEl.querySelector('.delete-btn').addEventListener('click', () => deletePermanent(item.id)); DOM.archivedWorksList.appendChild(itemEl); }); } adjustCollapsibleHeight(DOM.archivedWorksList); DOM.archivedPaymentsList.innerHTML = ''; const archivedPayments = state.archive.filter(item => item.itemType === ITEM_TYPES.PAYMENT); if (archivedPayments.length === 0) { DOM.archivedPaymentsList.innerHTML = emptyStateArchivedPaymentsEl; } else { archivedPayments.sort((a, b) => new Date(b.dateArchived) - new Date(a.dateArchived)).forEach(item => { const itemEl = document.createElement('div'); itemEl.className = 'item'; itemEl.innerHTML = `<div class="item-details"><div class="item-name">${item.employer} - ${item.description || 'دریافتی بایگانی‌شده'}</div><div class="item-meta"><span>تاریخ بایگانی: ${toJalali(item.dateArchived)}</span></div></div><div style="text-align: left;"><div class="payment-amount" style="margin-bottom: 8px;">${formatNumber(item.amount)} تومان</div><div class="item-actions"><button class="action-btn restore-btn" title="بازیابی"><i class="fas fa-undo"></i></button><button class="action-btn delete-btn" title="حذف دائمی"><i class="fas fa-trash-alt"></i></button></div></div>`; itemEl.querySelector('.restore-btn').addEventListener('click', () => restoreItem(item.id)); itemEl.querySelector('.delete-btn').addEventListener('click', () => deletePermanent(item.id)); DOM.archivedPaymentsList.appendChild(itemEl); }); } adjustCollapsibleHeight(DOM.archivedPaymentsList); }
         function downloadBackup() { const dataStr = JSON.stringify(state, null, 2); const dataBlob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(dataBlob); const link = document.createElement('a'); link.href = url; link.download = `financial_backup_${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(url); showNotification('فایل پشتیبان با موفقیت دانلود شد.', 'success'); }
-        function restoreBackup(event) { const file = event.target.files[0]; if (!file || !file.name.endsWith('.json')) return showNotification('لطفاً یک فایل JSON معتبر انتخاب کنید.', 'error'); const reader = new FileReader(); reader.onload = (e) => { try { const loadedState = JSON.parse(e.target.result); if (loadedState.works !== undefined && loadedState.payments !== undefined && loadedState.archive !== undefined) { showConfirmModal('بازیابی پشتیبان', 'با بازیابی این فایل، تمام اطلاعات فعلی شما پاک خواهد شد. آیا مطمئن هستید؟', () => { state = loadedState; saveToLocalStorage(); loadFromLocalStorage(); updateAll(); initCollapsibles(); switchPage('dashboard-page'); showNotification('پشتیبان با موفقیت بازیابی شد.', 'success'); }); } else showNotification('فایل پشتیبان معتبر نیست.', 'error'); } catch (error) { showNotification('خطا در خواندن فایل.', 'error'); } finally { event.target.value = ''; } }; reader.readText(file); }
+        function restoreBackup(event) { const file = event.target.files[0]; if (!file || !file.name.endsWith('.json')) return showNotification('لطفاً یک فایل JSON معتبر انتخاب کنید.', 'error'); const reader = new FileReader(); reader.onload = (e) => { try { const loadedState = JSON.parse(e.target.result); if (loadedState.works !== undefined && loadedState.payments !== undefined && loadedState.archive !== undefined) { showConfirmModal('بازیابی پشتیبان', 'با بازیابی این فایل، تمام اطلاعات فعلی شما پاک خواهد شد. آیا مطمئن هستید؟', () => { state = loadedState; loadFromLocalStorage(); updateAll(); initCollapsibles(); switchPage('dashboard-page'); showNotification('پشتیبان با موفقیت بازیابی شد.', 'success'); }); } else showNotification('فایل پشتیبان معتبر نیست.', 'error'); } catch (error) { showNotification('خطا در خواندن فایل.', 'error'); } finally { event.target.value = ''; } }; reader.readText(file); }
         function renderPaginationControls(container, totalItems, currentPage, itemsPerPage, onPageChange) { container.innerHTML = ''; const totalPages = Math.ceil(totalItems / itemsPerPage); if (totalPages <= 1) return; const prevButton = document.createElement('button'); prevButton.className = 'page-btn'; prevButton.textContent = 'صفحه قبل'; prevButton.disabled = currentPage === 1; prevButton.addEventListener('click', () => onPageChange(currentPage - 1)); const pageInfo = document.createElement('span'); pageInfo.className = 'page-info'; pageInfo.textContent = `صفحه ${currentPage} از ${totalPages}`; const nextButton = document.createElement('button'); nextButton.className = 'page-btn'; nextButton.textContent = 'صفحه بعد'; nextButton.disabled = currentPage === totalPages; nextButton.addEventListener('click', () => onPageChange(currentPage + 1)); container.append(prevButton, pageInfo, nextButton); }
         function adjustCollapsibleHeight(contentElement) { if (contentElement.classList.contains('open')) setTimeout(() => { contentElement.style.maxHeight = contentElement.scrollHeight + "px"; }, 50); }
         function initCollapsibles() { document.querySelectorAll('.collapsible-header').forEach(header => { const content = header.closest('.card').querySelector('.collapsible-content'); if (!content) return; if (state.collapsibleStates[content.id]) { header.classList.add('active'); content.classList.add('open'); setTimeout(() => content.style.maxHeight = content.scrollHeight + 'px', 100); } header.addEventListener('click', (e) => { if(e.target.tagName === 'INPUT') return; header.classList.toggle('active'); content.classList.toggle('open'); content.style.maxHeight = content.style.maxHeight ? null : content.scrollHeight + "px"; state.collapsibleStates[content.id] = header.classList.contains('active'); saveToLocalStorage(); }); }); }
         
+        function renameEmployerGlobal(oldName) {
+            showFormInModal('تغییر نام کارفرما (کلی)', 'rename-employer-template', (formEl) => {
+                const input = formEl.querySelector('#newEmployerName');
+                input.value = oldName;
+                formEl.querySelector('#saveNewNameBtn').addEventListener('click', () => {
+                    const newName = input.value.trim();
+                    if (!newName) return showNotification('لطفاً نام جدید را وارد کنید', 'error');
+                    if (newName === oldName) { DOM.formModal.style.display = 'none'; return; }
+
+                    // Update Works
+                    let updateCount = 0;
+                    state.works.forEach(w => { if(w.employer === oldName) { w.employer = newName; updateCount++; } });
+                    state.payments.forEach(p => { if(p.employer === oldName) { p.employer = newName; updateCount++; } });
+                    state.archive.forEach(a => { if(a.employer === oldName) { a.employer = newName; updateCount++; } });
+
+                    showNotification(`نام کارفرما در تمام سوابق (${updateCount} مورد) تغییر کرد.`, 'success');
+                    DOM.formModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    
+                    // If user merged two employers by renaming, we need to recalculate balance
+                    recalculateEmployerBalance(newName);
+                    
+                    DOM.employerListView.style.display = 'block';
+                    DOM.employerDetailView.style.display = 'none';
+                    updateAll();
+                });
+            });
+        }
+
         const formConfigs = {
             'work': { title: 'افزودن کار جدید', templateId: 'work-form-template', setup: (formEl) => { updateEmployerDatalist(formEl); formEl.querySelector('#workSubmitBtn').addEventListener('click', workSubmit); formEl.querySelector('#setStartDateBtn').addEventListener('click', () => { formEl.querySelector('#workDateStarted').value = getCurrentJalaliDate(); }); } },
             'payment': { title: 'ثبت دریافتی جدید', templateId: 'payment-form-template', setup: (formEl) => { populateEmployerDropdown(formEl.querySelector('#paymentEmployer')); formEl.querySelector('#paymentDate').value = getCurrentJalaliDate(); formEl.querySelector('#paymentSubmitBtn').addEventListener('click', paymentSubmit); } },
@@ -660,6 +1071,7 @@
             setTheme(savedTheme);
             loadFromLocalStorage(); 
             initCollapsibles(); 
+            initPinSystem(); 
             
             const tour = new Shepherd.Tour({
                 useModalOverlay: true,
@@ -670,125 +1082,21 @@
                 }
             });
 
-            tour.addStep({
-                id: 'welcome',
-                text: 'به حساب‌یار فریلنسر خوش آمدید! این یک راهنمای سریع برای آشنایی با برنامه است.',
-                buttons: [{ text: 'شروع کنیم', action: tour.next }]
-            });
-
-            tour.addStep({
-                id: 'dashboard',
-                title: 'داشبورد اصلی',
-                text: 'اینجا نمای کلی از وضعیت مالی شماست. می‌توانید درآمد، هزینه و مانده کل حساب خود را ببینید.',
-                attachTo: { element: '.dashboard-hero-card', on: 'bottom' },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }],
-                when: {
-                    show: async () => { await switchPage('dashboard-page'); }
-                }
-            });
-
-            tour.addStep({
-                id: 'goals',
-                title: 'اهداف مالی',
-                text: 'از این بخش می‌توانید اهداف ماهانه خود را برای درآمد و هزینه‌ها تعیین و پیشرفت خود را دنبال کنید. برای تنظیم، روی آیکون چرخ‌دنده کلیک کنید.',
-                attachTo: { element: '#goals-card', on: 'bottom' },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }],
-                when: {
-                    show: async () => { await switchPage('dashboard-page'); }
-                }
-            });
-
-            tour.addStep({
-                id: 'menu',
-                title: 'منوی اصلی',
-                text: 'از این منو برای جابجایی بین بخش‌های برنامه استفاده کنید. در نسخه موبایل، این منو در پایین صفحه قرار دارد.',
-                attachTo: {
-                    element: () => window.innerWidth > 768 ? '.sidebar' : '.mobile-nav',
-                    on: () => window.innerWidth > 768 ? 'right' : 'top'
-                },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }],
-                when: {
-                    show: async () => { await switchPage('dashboard-page'); }
-                }
-            });
-
-            tour.addStep({
-                id: 'add-button',
-                title: 'افزودن آیتم جدید',
-                text: 'از این دکمه مرکزی برای ثبت سریع کار، دریافتی یا هزینه جدید استفاده کنید. (فقط در موبایل نمایش داده می‌شود)',
-                attachTo: { element: '#mobile-fab-center', on: 'top' },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }],
-                when: {
-                    show: async () => {
-                        // این مرحله فقط برای موبایل است، در دسکتاپ از آن عبور می‌کنیم
-                        if (window.innerWidth > 768) {
-                            tour.next();
-                        } else {
-                            await switchPage('dashboard-page');
-                        }
-                    }
-                }
-            });
-
-            tour.addStep({
-                id: 'works-page',
-                title: 'صفحه کارها',
-                text: 'در این صفحه تمام کارهای ثبت‌شده خود را مدیریت می‌کنید. برای جستجو یا فیلتر کردن از گزینه‌های بالا استفاده کنید.',
-                attachTo: { element: '#works-page .card', on: 'bottom' },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }],
-                when: {
-                    show: async () => { await switchPage('works-page'); }
-                }
-            });
-
-            tour.addStep({
-                id: 'more-button',
-                title: 'بخش بیشتر (موبایل)',
-                text: 'برای دسترسی به تنظیمات، مدیریت کارفرمایان و سایر لیست‌ها در نسخه موبایل از این گزینه استفاده کنید.',
-                attachTo: { element: '.mobile-nav .nav-btn[data-page="more-page"]', on: 'top' },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }],
-                when: {
-                    show: async () => {
-                        if (window.innerWidth > 768) {
-                            tour.next();
-                        } else {
-                            await switchPage('works-page');
-                        }
-                    }
-                }
-            });
-
-            tour.addStep({
-                id: 'settings-page',
-                title: 'صفحه تنظیمات',
-                text: 'در اینجا می‌توانید تم برنامه را تغییر دهید، راهنما را دوباره ببینید و از اطلاعات خود پشتیبان تهیه کنید.',
-                attachTo: { element: '#settings-page .card:first-child', on: 'bottom' },
-                buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'پایان', action: tour.complete }],
-                when: {
-                    show: async () => { await switchPage('settings-page'); }
-                }
-            });
-
-            tour.on('complete', async () => {
-                localStorage.setItem('hasCompletedOnboarding', 'true');
-                await switchPage('dashboard-page');
-            });
-            tour.on('cancel', async () => {
-                localStorage.setItem('hasCompletedOnboarding', 'true');
-                await switchPage('dashboard-page');
-            });
-
+            tour.addStep({ id: 'welcome', text: 'به حساب‌یار فریلنسر خوش آمدید!', buttons: [{ text: 'شروع کنیم', action: tour.next }] });
+            tour.addStep({ id: 'dashboard', title: 'داشبورد اصلی', text: 'اینجا نمای کلی از وضعیت مالی شماست.', attachTo: { element: '.dashboard-hero-card', on: 'bottom' }, buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }], when: { show: () => switchPage('dashboard-page') } });
+            tour.addStep({ id: 'menu', title: 'منوی اصلی', text: 'از این منو برای جابجایی بین بخش‌های برنامه استفاده کنید.', attachTo: { element: () => window.innerWidth > 768 ? '.sidebar' : '.mobile-nav', on: () => window.innerWidth > 768 ? 'right' : 'top' }, buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }], when: { show: () => switchPage('dashboard-page') } });
+            tour.addStep({ id: 'expenses-page', title: 'صفحه هزینه‌ها', text: 'در این صفحه می‌توانید هزینه‌ها را مدیریت کرده و نمودار دسته‌بندی آن‌ها را ببینید.', attachTo: { element: '#expenses-page .card:first-child', on: 'bottom' }, buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'بعدی', action: tour.next }], when: { show: () => switchPage('expenses-page') } });
+            tour.addStep({ id: 'settings-page', title: 'صفحه تنظیمات', text: 'در اینجا می‌توانید تم برنامه را تغییر دهید و از اطلاعات خود پشتیبان تهیه کنید.', attachTo: { element: '#settings-page .card:first-child', on: 'bottom' }, buttons: [{ text: 'قبلی', action: tour.back, classes: 'shepherd-button-secondary' }, { text: 'پایان', action: tour.complete }], when: { show: () => switchPage('settings-page') } });
+            tour.on('complete', () => localStorage.setItem('hasCompletedOnboarding', 'true'));
+            tour.on('cancel', () => localStorage.setItem('hasCompletedOnboarding', 'true'));
+            
             if (!localStorage.getItem('hasCompletedOnboarding')) { setTimeout(() => tour.start(), 500); }
             
-            DOM.startTourBtn.addEventListener('click', () => {
-                switchPage('dashboard-page').then(() => {
-                   setTimeout(() => tour.start(), 200);
-                });
-            });
-
+            DOM.startTourBtn.addEventListener('click', () => { switchPage('dashboard-page').then(() => { setTimeout(() => tour.start(), 200); }); });
             [...DOM.mobileNavBtns].filter(b => b.dataset.page).forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.page)));
             DOM.navBtns.forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.page))); 
             DOM.downloadBackupBtn.addEventListener('click', downloadBackup); 
+            DOM.exportExcelBtn.addEventListener('click', exportToCSV); 
             DOM.uploadBackupInput.addEventListener('change', restoreBackup); 
             DOM.generateCustomReportBtn.addEventListener('click', generateCustomReport); 
             DOM.workSearchInput.addEventListener('input', () => { state.pagination.works.currentPage = 1; updateWorksList(); }); 
@@ -797,8 +1105,10 @@
             DOM.expenseSearchInput.addEventListener('input', updateExpensesList); 
             DOM.employerSearchInput.addEventListener('input', updateEmployersList); 
             DOM.backToEmployersListBtn.addEventListener('click', () => { DOM.employerDetailView.style.display = 'none'; DOM.employerListView.style.display = 'block'; }); 
-            document.querySelectorAll('[data-modal-close]').forEach(btn => btn.addEventListener('click', () => { btn.closest('.modal-overlay').style.display = 'none'; state.editingItemId=null; })); 
-            document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) { modal.style.display = 'none'; state.editingItemId=null; } })); 
+            DOM.editEmployerNameBtn.addEventListener('click', () => renameEmployerGlobal(DOM.employerDetailName.textContent));
+
+            document.querySelectorAll('[data-modal-close]').forEach(btn => btn.addEventListener('click', () => { btn.closest('.modal-overlay').style.display = 'none'; state.editingItemId=null; document.body.style.overflow = ''; })); 
+            document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) { modal.style.display = 'none'; state.editingItemId=null; document.body.style.overflow = ''; } })); 
             
             DOM.mobileFabCenter.addEventListener('click', () => {
                 showFormInModal('افزودن آیتم جدید', 'add-item-menu-template', (formEl) => {
@@ -815,7 +1125,6 @@
                 });
             });
             
-            // <<< اصلاح: رویداد برای انتخاب‌گر تم
             DOM.themeSelector.addEventListener('change', (e) => {
                 if (e.target.name === 'theme') {
                     setTheme(e.target.value);
@@ -825,7 +1134,8 @@
             DOM.headerThemeToggles.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const currentTheme = localStorage.getItem('theme') || 'theme-light';
-                    setTheme(currentTheme === 'theme-light' ? 'theme-dark' : 'theme-light');
+                    const isDark = ['theme-dark', 'theme-midnight', 'theme-royal'].includes(currentTheme);
+                    setTheme(isDark ? 'theme-light' : 'theme-dark');
                 });
             });
 
